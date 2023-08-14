@@ -107,35 +107,18 @@ public:
 };
 
 int main() {
-    std::vector<uint32_t> initData = {0, 0, 0}; // 初始化数据，可根据需要修改大小
-     // std::vector<uint32_t> initData(129, 0);
+//    std::vector<uint32_t> initData = {0, 0}; // 初始化数据，可根据需要修改大小
+    std::vector<uint32_t> initData(2, 0);
 
     CommandContent cmd(initData);
 
-    cmd.setBitValue(10, true);
-    cmd.setBitsRange(15, 5, 0b10101);
-    cmd.setBitsRange(45, 5, 0b10101);
-
-    std::cout << "Bit 10: " << cmd.getBitValue(10) << std::endl;
-    std::cout << "Bit 15: " << cmd.getBitValue(15) << std::endl;
-    std::cout << "Bit 16: " << cmd.getBitValue(16) << std::endl;
-    std::cout << "Bit 17: " << cmd.getBitValue(17) << std::endl;
-
-    uint32_t rangeValue = cmd.getBitsRange(15, 5);
-    std::cout << "Range Value: " << rangeValue << std::endl;
-
-    // 使用 std::hex 以及 std::width 和 std::fill 来控制输出格式
-    std::cout << "Range Value: 0x" << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << rangeValue << std::endl;
-
-    std::cout << "data 0: 0x" << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << cmd.getBitsRange(0,32) << std::endl;
-    std::cout << "data 1: 0x" << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << cmd.getBitsRange(32,32) << std::endl;
-
-    // 使用 setBitsRangeFromTo 和 getBitsRangeFromTo 设置和获取位范围
-    cmd.setBitsRangeFromTo(2, 12, 0b11001010101);
-    uint32_t newRangeValue = cmd.getBitsRangeFromTo(2, 12);
-    std::cout << "New Range Value: " << newRangeValue << std::endl;
-    std::cout << "New Range Value: 0x" << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << newRangeValue << std::endl;
-
+//    设置第0位
+    cmd.setBitValue(0, true);
+//    设置1-7位
+    cmd.setBitsRangeFromTo(1,7, 0b1111111);
+//    设置,从32位开始，连续8位
+    cmd.setBitsRange(32, 8, 0b11111111);
+//    这里输出，目前是低32在前
     cmd.hexShow();
     cmd.binaryShow();
     return 0;
