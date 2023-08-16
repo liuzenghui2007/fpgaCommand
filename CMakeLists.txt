@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(pc main.cpp
-    CommandContent.h CommandContent.cpp)
+    CommandContent.h CommandContent.cpp
+    CommandRegister.h)
 
 include(GNUInstallDirs)
 install(TARGETS pc

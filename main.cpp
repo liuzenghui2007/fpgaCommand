@@ -4,7 +4,10 @@
 #include <stdexcept>
 #include <bitset>
 
+#include "CommandRegister.h"
 #include "CommandContent.h"
+
+#define STRINGIFY(x) #x
 
 int main() {
 //    std::vector<uint32_t> initData = {0, 0}; // 初始化数据，可根据需要修改大小
@@ -21,5 +24,8 @@ int main() {
 //    这里输出，目前是低32在前
     cmd.hexShow();
     cmd.binaryShow();
+
+    RegisterEnum reg = RegisterEnum::READ_ADC_ACQ_TIME_CFG_REG_32BIT;
+    std::cout << reg << std::endl;
     return 0;
 }

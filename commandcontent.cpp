@@ -1,5 +1,6 @@
 #include "CommandContent.h"
 
+
 CommandContent::CommandContent(const CommandContent& other) : data(other.data) {}
 
 CommandContent::CommandContent(const std::vector<uint32_t>& newData) : data(newData) {}
