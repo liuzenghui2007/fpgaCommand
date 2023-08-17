@@ -11,7 +11,7 @@ public:
 
     void devicesList();
     bool deviceOpen();
-    bool host2Device(uint8_t* command, int length);
+    bool host2Device(const uint8_t* command, int length);
     bool device2Host(uint8_t* buffer, int length);
 
 private:

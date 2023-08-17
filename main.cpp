@@ -14,8 +14,7 @@
 int main() {
 //    std::vector<uint32_t> initData = {0, 0}; // 初始化数据，可根据需要修改大小
 
-    DeviceControl deviceCtrl;
-    deviceCtrl.deviceOpen();
+
 
     std::vector<uint32_t> initData(1, 0);
     CommandContent cmdContent(initData);
@@ -30,6 +29,17 @@ int main() {
 
     std::cout << cmd.getCommandData().size() << std::endl;
 
+
+
+    // 获取命令数据
+    const std::vector<uint8_t>& commandData = cmd.getCommandData();
+
+    // 使用 host2Device 函数发送命令数据
+    DeviceControl deviceCtrl;
+    deviceCtrl.deviceOpen();
+    if (!deviceCtrl.host2Device(commandData.data(), commandData.size())) {
+        std::cerr << "Failed to send command." << std::endl;
+    }
 
     return 0;
 }

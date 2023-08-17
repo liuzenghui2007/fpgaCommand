@@ -40,16 +40,16 @@ bool DeviceControl::deviceOpen() {
     return true;
 }
 
-bool DeviceControl::host2Device(uint8_t* command, int length) {
+bool DeviceControl::host2Device(const uint8_t* command, int length) {
     if (!handle) {
         std::cerr << "Device not opened." << std::endl;
         return false;
     }
 
     int transferred;
-    int result = libusb_bulk_transfer(handle, OUT_ENDPOINT, command, length, &transferred, 0);
+    int result = libusb_bulk_transfer(handle, OUT_ENDPOINT, const_cast<uint8_t*>(command), length, &transferred, 0);
     if (result != LIBUSB_SUCCESS) {
-        std::cerr << "Error sending command to the device." << std::endl;
+        std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;
     }
 
