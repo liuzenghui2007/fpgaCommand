@@ -24,6 +24,7 @@ public:
     uint32_t getBitsRangeFromTo(int fromIndex, int toIndex) const;
     void hexShow() const;
     void binaryShow() const;
+    const std::vector<uint32_t>& getData() const;
     // 指令构造
 };
 

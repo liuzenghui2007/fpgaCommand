@@ -31,8 +31,17 @@ enum RegisterEnum : uint32_t
     WRITE_ASIC_TEMP_SET_REG_32BIT = 0x03000001,        // ASIC 温度设定寄存器, 写
     READ_ASIC_TEMP_SENSOR_REG_32BIT = 0x83000001,      // ASIC 温度传感器返回值, 读
     READ_HEATER_VOLTAGE_STATUS_REG_32BIT = 0x82000001, // 加热器电压状态寄存器, 读
+    // ASIC_VT control registers
+    WRITE_ASIC_VT_SINGLE_OUTPUT_REG_32BIT =  0x04000001,   // ASIC_VT 单次输出寄存器, 写
+    WRITE_ASIC_VT_CONT_OUTPUT_CFG_REG_32BIT =  0x04000002, // ASIC_VT 连续输出配置寄存器, 写
+    WRITE_ASIC_VT_MODE_CONTROL_REG_32BIT =  0x04000003,    // ASIC_VT 模式控制寄存器, 写
+    READ_ASIC_VT_CURRENT_VALUE_REG_32BIT =  0x84000001,    // ASIC_VT 当前值, 读
 
-    // ... (其他寄存器)
+    // FC_VCOM control registers
+    WRITE_FC_VCOM_SINGLE_OUTPUT_REG_32BIT =  0x05000001,   // FC_VCOM 单次输出寄存器, 写
+    WRITE_FC_VCOM_CONT_OUTPUT_CFG_REG_32BIT =  0x05000002, // FC_VCOM 连续输出配置寄存器, 写
+    WRITE_FC_VCOM_MODE_CONTROL_REG_32BIT =  0x05000003,    // FC_VCOM 模式控制寄存器, 写
+    READ_FC_VCOM_CURRENT_VALUE_REG_32BIT =  0x85000001,    // FC_VCOM 当前值, 读
 
     // LED control registers
     READ_LED_CURRENT_VALUE_REG_32BIT = 0x84000001,  // LED 电流值寄存器 32BIT[]

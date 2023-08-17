@@ -88,3 +88,8 @@ void CommandContent::binaryShow() const {
         std::cout << std::bitset<32>(value).to_string().insert(24, " ").insert(16, " ").insert(8, " ") << '\n';
     }
 }
+
+// 返回成员变量 data
+const std::vector<uint32_t>& CommandContent::getData() const {
+    return data;
+}
