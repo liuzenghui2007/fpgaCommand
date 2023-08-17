@@ -17,18 +17,18 @@ int main() {
     DeviceControl deviceCtrl;
     deviceCtrl.deviceOpen();
 
-    std::vector<uint32_t> initData(2, 0);
+    std::vector<uint32_t> initData(1, 0);
     CommandContent cmdContent(initData);
 
-    cmdContent.setBitValue(0, true);
-    cmdContent.setBitsRangeFromTo(1,7, 0b1111111);
-
+    //    cmdContent.setBitValue(0, true);
+    //    cmdContent.setBitsRangeFromTo(1,7, 0b1111111);
     //    这里输出，目前是低32在前
     //    cmdContent.hexShow();
     //    cmdContent.binaryShow();
 
-    FpgaCommand fpgaCommand(1, RegisterEnum::READ_ADC_ACQ_TIME_CFG_REG_32BIT, cmdContent.getData());
+    FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
 
+    std::cout << cmd.getCommandData().size() << std::endl;
 
 
     return 0;
