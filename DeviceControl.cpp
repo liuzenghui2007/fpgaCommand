@@ -47,13 +47,14 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
         return false;
     }
 
+    std::cout << "ctrl start:" << std::endl;
     for (size_t i = 0; i < length; ++i) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(command[i]) << " ";
     }
-    std::cout << std::dec << std::endl;
+    std::cout << std::endl << "ctrl end" <<  std::dec << std::endl;
 
     int transferred;
-    int result = libusb_bulk_transfer(handle, IN_ENDPOINT, const_cast<uint8_t*>(command), length, &transferred, 0);
+    int result = libusb_bulk_transfer(handle, OUT_ENDPOINT, const_cast<uint8_t*>(command), length, &transferred, 0);
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;

@@ -25,6 +25,10 @@ int main() {
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
     FpgaCommand cmd(255, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
 
+    if (!devCtrl.host2Device(cmd.getCommand().data(), cmd.getCommand().size())) {
+        std::cerr << "Failed to send command." << std::endl;
+    }
+
     // asic on
     // asic power
     cmdContent.reset(0);

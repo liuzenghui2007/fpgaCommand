@@ -20,7 +20,7 @@ class FpgaCommand {
 public:
     FpgaCommand(uint32_t commandNumber, uint32_t registerAddress, const std::vector<uint32_t>& commandContent);
 
-    const std::vector<uint8_t>& getcommand() const;
+    const std::vector<uint8_t>& getCommand() const;
 
     void fillCommand(uint32_t commandNumber, uint32_t registerAddress, const std::vector<uint32_t>& commandContent);
     void showCommand() const;

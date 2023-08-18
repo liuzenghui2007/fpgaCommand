@@ -7,7 +7,7 @@ FpgaCommand::FpgaCommand(uint32_t commandNumber, uint32_t registerAddress, const
     fillCommand(commandNumber,  registerAddress, commandContent);
 }
 
-const std::vector<uint8_t>& FpgaCommand::getcommand() const {
+const std::vector<uint8_t>& FpgaCommand::getCommand() const {
     return command;
 }
 
