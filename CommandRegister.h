@@ -17,7 +17,7 @@ enum RegisterEnum : uint32_t
     READ_ADC_ACQ_TIME_CFG_REG_32BIT = 0x80000005,          // 读：ADC ACQ time 状态寄存器
 
     // ASIC CONTROL registers
-    WRITE_ASIC_CTRL_REG_32BIT = 0x01000001,                     // 写：ASIC控制寄存器
+    WRITE_ASIC_CTRL_REG_32BIT = 0x01000001,                     // 写：ASIC控制寄存器, 设置工作模式
     WRITE_ASIC_POWER_CTRL_REG_32BIT = 0x01000002,               // 写：ASIC POWER 控制寄存器
     WRITE_ASIC_VCM_EN_CTRL_REG_32BIT = 0x01000003,              // 写：ASIC VCM_EN 控制寄存器
     WRITE_ASIC_FC_VCOM_EN_CTRL_REG_32BIT = 0x01000004,          // 写：ASIC FC_VCOM_EN 控制寄存器

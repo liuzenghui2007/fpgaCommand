@@ -5,6 +5,10 @@ CommandContent::CommandContent(const CommandContent& other) : data(other.data) {
 
 CommandContent::CommandContent(const std::vector<uint32_t>& newData) : data(newData) {}
 
+void CommandContent::fillContent(const std::vector<uint32_t>& newData) {
+    data = newData;
+}
+
 void CommandContent::setBitValue(int index, bool value) {
     int arrayIndex = index / 32;
     int bitOffset = index % 32;

@@ -55,7 +55,21 @@ int main() {
     cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_CFG_REG_32BIT, cmdContent.getData());
 
     // set work mode
-    cmdContent.reset(0);
+    int contentLength = 4;
+    cmdContent.fillContent(std::vector<uint32_t>(contentLength, 0));
+    for (int i= 0; i < 32; i++ ) {
+        int bitIndex = 32 * contentLength - 4 * (i + 1);
+        cmdContent.setBitsRange(bitIndex, 4, i);
+    }
+    // cmdContent.binaryShow();
+    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_CFG_REG_32BIT, cmdContent.getData());
+
+    cmdContent.fillContent(std::vector<uint32_t>(1, 0));
+    cmdContent.setBitsRange(3, 2, 0b00); // 设置 3、4 bit 为00， 对应-1/3 mV/pA;
+    cmdContent.setBitsRange(19,2, 0b11); // 设置19、20bit 为11， 对应3、4bit生效；
+
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CTRL_REG_32BIT, cmdContent.getData());
+    // set gain
 
     return 0;
 }
