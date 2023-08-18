@@ -15,6 +15,7 @@ public:
     bool device2Host(uint8_t* buffer, int length);
 
 private:
+    const int interface_number = 0;
     const int vid = 0x0ff8;
     const int pid = 0x00ff;
 

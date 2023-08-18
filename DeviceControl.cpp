@@ -38,6 +38,14 @@ bool DeviceControl::deviceOpen() {
         std::cerr << "Device not found or cannot be opened." << std::endl;
         return false;
     }
+    int ret = libusb_claim_interface(handle, interface_number);
+    if (ret != LIBUSB_SUCCESS)
+    {
+        std::cerr << "Failed to claim USB interface: " << libusb_strerror(static_cast<libusb_error>(ret)) << std::endl;
+        libusb_close(handle);
+        libusb_exit(NULL);
+        return 1;
+    }
 
     return true;
 }
@@ -48,37 +56,22 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
         return false;
     }
 
-    std::string send = "FFAA0014000000018100000100000000000055AA";
-    std::vector<uint8_t> sendVector;
-    for (size_t i = 0; i < send.length(); i += 2) {
-        uint8_t byte = std::stoi(send.substr(i, 2), nullptr, 16);
-        sendVector.push_back(byte);
-    }
 
-    char getBuf[1000];
-    int actualLength = 0;
-    libusb_bulk_transfer(handle, IN_ENDPOINT,  reinterpret_cast<unsigned char*>(&getBuf), 20, &actualLength, 100);
-
-    // 发送命令 ok
-    std::cout << "sendVector Content:" << std::endl;
-    for (size_t i = 0; i < sendVector.size(); ++i) {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(sendVector[i]) << " ";
-    }
-    std::cout << std::endl;
-    libusb_bulk_transfer(handle, OUT_ENDPOINT,  sendVector.data(), 20, &actualLength, 0);
 
     // 发送命令发fail
-    std::cout << "command Content:" << std::endl;
+    std::cout << "send command:" << std::endl;
     for (size_t i = 0; i < length; ++i) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(command[i]) << " ";
     }
     std::cout << std::endl;
 
     int transferred;
-    int result = libusb_bulk_transfer(handle, OUT_ENDPOINT, const_cast<uint8_t*>(command), length, &transferred, 0);
+    int result = libusb_bulk_transfer(handle, OUT_ENDPOINT, const_cast<uint8_t*>(command), length, &transferred, 10);
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;
+    } else {
+        std::cout << "ok" << std::endl;
     }
 
     // 结束
