@@ -19,9 +19,16 @@ void printBitsInGroups(const char* buffer, size_t bufferSize) {
     std::cout << std::endl;
 }
 
+void printHexInGroups(const char* buffer, size_t bufferSize) {
+    for (size_t i = 0; i < bufferSize; ++i) {
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(buffer[i] & 0xFF) << " ";
+        if ((i + 1) % 8 == 0) std::cout << " ";
+    }
+    std::cout << std::endl;
+}
+
 int main() {
 //    std::vector<uint32_t> initData = {0, 0}; // 初始化数据，可根据需要修改大小
-
 
 
 
@@ -29,25 +36,25 @@ int main() {
     DeviceControl devCtrl;
     devCtrl.deviceOpen();
 
-    char getBuffer[4];
-    int  maxReadLength = 4;
+    char getBuffer[100];
+    int  maxReadLength = 20;
     int ret = 0;
 
     // 清空设备缓存区
     ret = devCtrl.device2Host((unsigned char*)&getBuffer, maxReadLength);
 
-    printBitsInGroups(getBuffer, sizeof(getBuffer));
+    printHexInGroups(getBuffer, sizeof(getBuffer));
 
     // 读整体状态
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
 
-//    ret = devCtrl.host2Device(cmd.getCommand().data(), cmd.getCommand().size());
-//    ret = devCtrl.device2Host((unsigned char*)&getBuffer, maxReadLength);
+    ret = devCtrl.host2Device(cmd.getCommand().data(), cmd.getCommand().size());
+    ret = devCtrl.device2Host((unsigned char*)&getBuffer, maxReadLength);
 
-//    printBitsInGroups(getBuffer, sizeof(getBuffer));
+    printHexInGroups(getBuffer, sizeof(getBuffer));
 
-    std::cout << ret;
+
     // asic on
     // asic power
     cmdContent.reset(0);

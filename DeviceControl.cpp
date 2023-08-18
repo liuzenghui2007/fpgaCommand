@@ -108,7 +108,7 @@ bool DeviceControl::device2Host(uint8_t* getBuffer, int length) {
         std::cerr << "Error reading data from the device." << std::endl;
         return false;
     }
-
+    std::cout << "Received: " << transferred << std::endl;
     return true;
 }
 
