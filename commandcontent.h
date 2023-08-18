@@ -25,7 +25,8 @@ public:
     void hexShow() const;
     void binaryShow() const;
     const std::vector<uint32_t>& getData() const;
-    // 指令构造
+    // 重置data向量中的所有元素为指定值
+    void reset(uint32_t value);
 };
 
 #endif  // COMMANDCONTENT_H

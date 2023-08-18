@@ -93,3 +93,9 @@ void CommandContent::binaryShow() const {
 const std::vector<uint32_t>& CommandContent::getData() const {
     return data;
 }
+
+void CommandContent::reset(uint32_t value) {
+    for (size_t i = 0; i < data.size(); ++i) {
+        data[i] = value;
+    }
+}

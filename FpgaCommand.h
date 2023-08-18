@@ -20,19 +20,19 @@ class FpgaCommand {
 public:
     FpgaCommand(uint32_t commandNumber, uint32_t registerAddress, const std::vector<uint32_t>& commandContent);
 
-    const std::vector<uint8_t>& getCommandData() const;
+    const std::vector<uint8_t>& getcommand() const;
+
+    void fillCommand(uint32_t commandNumber, uint32_t registerAddress, const std::vector<uint32_t>& commandContent);
     void showCommand() const;
 
 private:
+    // 核心数据
+    std::vector<uint8_t> command; // 使用 std::vector 代替 std::array
+
     uint16_t commandLength;
     uint32_t commandNumber;
     uint32_t registerAddress;
     std::vector<uint32_t> commandContent;
-    std::vector<uint8_t> commandData; // 使用 std::vector 代替 std::array
-
-    void fillCommandData();
-    void fillUint32ToBytes(uint32_t value, std::vector<uint8_t>& bytes, int index);
-
 };
 
 #endif // FPGA_COMMAND_H
