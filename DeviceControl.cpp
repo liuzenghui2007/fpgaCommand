@@ -2,6 +2,8 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <QString>
+#include <QByteArray>
 
 DeviceControl::DeviceControl() {
     libusb_init(&context);
@@ -31,7 +33,7 @@ void DeviceControl::devicesList() {
 }
 
 bool DeviceControl::deviceOpen() {
-    devicesList();
+//    devicesList();
 
     handle = libusb_open_device_with_vid_pid(context, vid, pid);
     if (handle == nullptr) {
@@ -56,6 +58,25 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
         return false;
     }
 
+    QString send = "FFAA0014000000018100000100000000000055AA";
+    QByteArray sendBuf = QByteArray::fromHex(send.toLatin1());
+
+    char getBuf[1000];
+    int acturalLenth = 0;
+
+    int r = libusb_bulk_transfer(handle, IN_ENDPOINT,  (unsigned char*)&getBuf, 20, &acturalLenth, 100);
+
+    if (r != LIBUSB_SUCCESS) {
+        std::cerr << "r0 Error sending command to the device. " << r << std::endl;
+        return false;
+    } else {
+        std::cout << "ok" << std::endl;
+    }
+
+    // 发送命令
+    r = libusb_bulk_transfer(handle, OUT_ENDPOINT,  (unsigned char*)sendBuf.data(), 20, &acturalLenth, 0);
+    // 接收命令
+    r = libusb_bulk_transfer(handle, IN_ENDPOINT,  (unsigned char*)&getBuf, 20, &acturalLenth, 0);
 
 
     // 发送命令发fail
@@ -71,7 +92,7 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
         std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;
     } else {
-        std::cout << "ok" << std::endl;
+        std::cout << "libusb ok" << std::endl;
     }
 
     // 结束
