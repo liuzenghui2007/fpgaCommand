@@ -64,12 +64,25 @@ int main() {
     // cmdContent.binaryShow();
     cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_CFG_REG_32BIT, cmdContent.getData());
 
+    // set gain 使用asic_ctrl
     cmdContent.fillContent(std::vector<uint32_t>(1, 0));
     cmdContent.setBitsRange(3, 2, 0b00); // 设置 3、4 bit 为00， 对应-1/3 mV/pA;
-    cmdContent.setBitsRange(19,2, 0b11); // 设置19、20bit 为11， 对应3、4bit生效；
-
+    cmdContent.setBitsRange(16 + 3, 2, 0b11); // 设置19、20bit 为11， 对应3、4bit生效；
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CTRL_REG_32BIT, cmdContent.getData());
-    // set gain
 
+    // disable unblock 使用asic_ctrl
+    cmdContent.fillContent(std::vector<uint32_t>(1,0));
+    cmdContent.setBitValue(0, 0);   // 设置0 bit为0，禁止疏通
+    cmdContent.setBitValue(16 + 0, 1); // 设置对应掩码bit为1
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CTRL_REG_32BIT, cmdContent.getData());
+
+    // set protocol voltage fixed value 设定测序电压-恒定
+    cmdContent.fillContent(std::vector<uint32_t>(1,0));
+    cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_FIXED_OUTPUT_REG_32BIT, cmdContent.getData());
+
+    // toggle protocol voltage mode fixed value 选定测序电压-恒定
+    cmdContent.fillContent(std::vector<uint32_t>(1,0));
+    cmdContent.setBitsRange(0, 1, 0b11); // 单次模式
+    cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_MODE_CONTROL_REG_32BIT, cmdContent.getData());
     return 0;
 }
