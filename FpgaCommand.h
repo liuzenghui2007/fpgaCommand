@@ -8,6 +8,14 @@
 #include <iostream>
 #include <iomanip>
 
+#include <winsock2.h>
+
+//htonl（host to network long）：将 32 位主机字节顺序的整数转换为网络字节顺序的整数。
+//htons（host to network short）：将 16 位主机字节顺序的短整数转换为网络字节顺序的短整数。
+//ntohl（network to host long）：将网络字节顺序的 32 位整数转换为主机字节顺序的整数。
+//ntohs（network to host short）：将网络字节顺序的 16 位短整数转换为主机字节顺序的短整数。
+
+
 class FpgaCommand {
 public:
     FpgaCommand(uint32_t commandNumber, uint32_t registerAddress, const std::vector<uint32_t>& commandContent);

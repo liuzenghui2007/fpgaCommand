@@ -48,7 +48,9 @@ add_executable(control main.cpp
     CommandContent.h CommandContent.cpp
     CommandRegister.h
     FpgaCommand.h FpgaCommand.cpp
-    DeviceControl.h DeviceControl.cpp)
+    DeviceControl.h DeviceControl.cpp
+    common.h
+    common.cpp)
 
 
 target_link_libraries(control

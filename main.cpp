@@ -22,16 +22,7 @@ int main() {
 
 
 
-    // 使用 host2Device 函数发送命令数据
-    DeviceControl deviceCtrl;
-    deviceCtrl.deviceOpen();
-
-
-
     cmd.showCommand();
-    if (!deviceCtrl.host2Device(cmd.getCommandData().data(), cmd.getCommandData().size())) {
-        std::cerr << "Failed to send command." << std::endl;
-    }
 
     return 0;
 }
