@@ -91,10 +91,7 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;
-    } else {
-        std::cout << "libusb ok" << std::endl;
     }
-
     // 结束
     return true;
 }
