@@ -20,18 +20,20 @@ int main() {
     DeviceControl devCtrl;
     devCtrl.deviceOpen();
 
+    char getBuffer[1000];
+    int  maxReadLength = 1000;
+    int ret = 0;
+
+    // 清空设备缓存区
+    ret = devCtrl.device2Host((unsigned char*)&getBuffer, maxReadLength);
 
     // 读整体状态
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
 
-    int ret = devCtrl.host2Device(cmd.getCommand().data(), cmd.getCommand().size());
-    if( ret != LIBUSB_SUCCESS) {
-        std::cout << "send failed";
-    }
-    else {
-        std::cout << "send successful";
-    }
+    ret = devCtrl.host2Device(cmd.getCommand().data(), cmd.getCommand().size());
+
+    ret = devCtrl.device2Host((unsigned char*)&getBuffer, maxReadLength);
 
 
     // asic on

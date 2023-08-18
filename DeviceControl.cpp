@@ -58,33 +58,33 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
         return false;
     }
 
-    QString send = "FFAA0014000000018100000100000000000055AA";
-    QByteArray sendBuf = QByteArray::fromHex(send.toLatin1());
+//    QString send = "FFAA0014000000018100000100000000000055AA";
+//    QByteArray sendBuf = QByteArray::fromHex(send.toLatin1());
 
-    char getBuf[1000];
-    int acturalLenth = 0;
+//    char getBuf[1000];
+//    int acturalLenth = 0;
 
-    int r = libusb_bulk_transfer(handle, IN_ENDPOINT,  (unsigned char*)&getBuf, 20, &acturalLenth, 100);
+//    int r = libusb_bulk_transfer(handle, IN_ENDPOINT,  (unsigned char*)&getBuf, 20, &acturalLenth, 100);
 
-    if (r != LIBUSB_SUCCESS) {
-        std::cerr << "r0 Error sending command to the device. " << r << std::endl;
-        return false;
-    } else {
-        std::cout << "ok" << std::endl;
-    }
+//    if (r != LIBUSB_SUCCESS) {
+//        std::cerr << "r0 Error sending command to the device. " << r << std::endl;
+//        return false;
+//    } else {
+//        std::cout << "ok" << std::endl;
+//    }
 
-    // 发送命令
-    r = libusb_bulk_transfer(handle, OUT_ENDPOINT,  (unsigned char*)sendBuf.data(), 20, &acturalLenth, 0);
-    // 接收命令
-    r = libusb_bulk_transfer(handle, IN_ENDPOINT,  (unsigned char*)&getBuf, 20, &acturalLenth, 0);
+//    // 发送命令
+//    r = libusb_bulk_transfer(handle, OUT_ENDPOINT,  (unsigned char*)sendBuf.data(), 20, &acturalLenth, 0);
+//    // 接收命令
+//    r = libusb_bulk_transfer(handle, IN_ENDPOINT,  (unsigned char*)&getBuf, 20, &acturalLenth, 0);
 
 
-    // 发送命令发fail
-    std::cout << "send command:" << std::endl;
-    for (size_t i = 0; i < length; ++i) {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(command[i]) << " ";
-    }
-    std::cout << std::endl;
+//    // 发送命令发fail
+//    std::cout << "send command:" << std::endl;
+//    for (size_t i = 0; i < length; ++i) {
+//        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(command[i]) << " ";
+//    }
+//    std::cout << std::endl;
 
     int transferred;
     int result = libusb_bulk_transfer(handle, OUT_ENDPOINT, const_cast<uint8_t*>(command), length, &transferred, 10);
@@ -99,14 +99,14 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
     return true;
 }
 
-bool DeviceControl::device2Host(uint8_t* buffer, int length) {
+bool DeviceControl::device2Host(uint8_t* getBuffer, int length) {
     if (!handle) {
         std::cerr << "Device not opened." << std::endl;
         return false;
     }
 
     int transferred;
-    int result = libusb_bulk_transfer(handle, IN_ENDPOINT, buffer, length, &transferred, 0);
+    int result = libusb_bulk_transfer(handle, IN_ENDPOINT, (unsigned char*)&getBuffer, length, &transferred, 0);
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error reading data from the device." << std::endl;
         return false;
