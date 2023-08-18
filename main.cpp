@@ -27,6 +27,8 @@ int main() {
     deviceCtrl.deviceOpen();
 
 
+
+    cmd.showCommand();
     if (!deviceCtrl.host2Device(cmd.getCommandData().data(), cmd.getCommandData().size())) {
         std::cerr << "Failed to send command." << std::endl;
     }
