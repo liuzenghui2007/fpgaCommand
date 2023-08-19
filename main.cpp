@@ -32,7 +32,6 @@ int main() {
 
 
 
-
     DeviceControl devCtrl;
     devCtrl.deviceOpen();
 

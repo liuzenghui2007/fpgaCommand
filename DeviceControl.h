@@ -20,9 +20,9 @@ private:
     const int pid = 0x00ff;
 
 
-    int OUT_ENDPOINT = 0x01;
-    int IN_ENDPOINT = 0x81;
-    int DATA_ENDPOINT = 0x82;
+    int endpoint_out = 0x01;
+    int endpoint_in = 0x81;
+    int endpoint_data = 0x82;
 
     libusb_device_handle* handle;
     libusb_context* context;

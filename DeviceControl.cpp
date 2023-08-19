@@ -58,20 +58,20 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
         return false;
     }
 
-//    QString send = "FFAA0014000000018100000100000000000055AA";
-//    QByteArray sendBuf = QByteArray::fromHex(send.toLatin1());
+    QString send = "FFAA0014000000018100000100000000000055AA";
+    QByteArray sendBuf = QByteArray::fromHex(send.toLatin1());
 
-//    char getBuf[1000];
-//    int acturalLenth = 0;
+    char getBuf[1000];
+    int acturalLenth = 0;
 
-//    int r = libusb_bulk_transfer(handle, IN_ENDPOINT,  (unsigned char*)&getBuf, 20, &acturalLenth, 100);
+    int r = libusb_bulk_transfer(handle, endpoint_in,  (unsigned char*)&getBuf, 20, &acturalLenth, 100);
 
-//    if (r != LIBUSB_SUCCESS) {
-//        std::cerr << "r0 Error sending command to the device. " << r << std::endl;
-//        return false;
-//    } else {
-//        std::cout << "ok" << std::endl;
-//    }
+    if (r != LIBUSB_SUCCESS) {
+        std::cerr << "r0 Error sending command to the device. " << r << std::endl;
+        return false;
+    } else {
+        std::cout << "ok" << std::endl;
+    }
 
 //    // 发送命令
 //    r = libusb_bulk_transfer(handle, OUT_ENDPOINT,  (unsigned char*)sendBuf.data(), 20, &acturalLenth, 0);
@@ -87,7 +87,7 @@ bool DeviceControl::host2Device(const uint8_t* command, int length) {
 //    std::cout << std::endl;
 
     int transferred;
-    int result = libusb_bulk_transfer(handle, OUT_ENDPOINT, const_cast<uint8_t*>(command), length, &transferred, 10);
+    int result = libusb_bulk_transfer(handle, endpoint_out, const_cast<uint8_t*>(command), length, &transferred, 10);
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;
@@ -103,7 +103,7 @@ bool DeviceControl::device2Host(uint8_t* getBuffer, int length) {
     }
 
     int transferred;
-    int result = libusb_bulk_transfer(handle, IN_ENDPOINT, (unsigned char*)&getBuffer, length, &transferred, 0);
+    int result = libusb_bulk_transfer(handle, endpoint_in, (unsigned char*)&getBuffer, length, &transferred, 0);
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error reading data from the device." << std::endl;
         return false;
