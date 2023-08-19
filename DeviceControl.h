@@ -24,8 +24,8 @@ private:
     unsigned char endpoint_in = 0x81;
     unsigned char endpoint_data = 0x82;
 
-    unsigned char buffer[32];
-    int length = 32;
+    unsigned char buffer[20];
+    int length = 20;
 
     libusb_device_handle* handle;
     libusb_context* context;

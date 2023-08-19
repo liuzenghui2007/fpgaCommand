@@ -63,13 +63,14 @@ bool DeviceControl::sendCmd(const uint8_t* command, int length) {
         return false;
     }
 
+
+    std::cout << std::dec << "Sent Length: " << length << std::endl;
     std::cout << "Send command: ";
     for (int i = 0; i < length; ++i) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(command[i]) << " ";
     }
     std::cout << std::endl;
 
-    std::cout << std::dec << "Sent Length" << length << std::endl;
     int transferred;
     int result = libusb_bulk_transfer(handle, endpoint_out, const_cast<uint8_t*>(command), length, &transferred, 10);
     if (result != LIBUSB_SUCCESS) {
@@ -92,7 +93,7 @@ bool DeviceControl::receiveData() {
         return false;
     }
     std::cout << "Received: " << transferred << std::endl;
-    std::cout << "Received data:" << std::endl;
+    std::cout << "Received data: ";
     for (int i = 0; i < sizeof(buffer); ++i) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(buffer[i]) << " ";
     }
