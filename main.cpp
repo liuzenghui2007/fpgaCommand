@@ -66,6 +66,7 @@ int main() {
     cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_CFG_REG_32BIT, cmdContent.getData());
 
     // set work mode
+    // 工作模式用4个32bit设置
     int contentLength = 4;
     cmdContent.fillContent(std::vector<uint32_t>(contentLength, 0));
     for (int i= 0; i < 32; i++ ) {
