@@ -26,12 +26,12 @@ int main() {
 //    ret = devCtrl.receiveData();
 
 
-    // 读整体状态, 读不到
+    // 读整体状态
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
 
-    ret = devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
-    ret = devCtrl.receiveData();
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    devCtrl.receiveData();
 
 
 
