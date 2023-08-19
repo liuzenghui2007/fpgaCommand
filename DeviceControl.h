@@ -12,7 +12,7 @@ public:
     void devicesList();
     bool deviceOpen();
     bool sendCmd(const uint8_t* command, int length);
-    bool receiveData(uint8_t* buffer, int length);
+    bool receiveData();
 
 private:
     const int interface_number = 0;
@@ -23,6 +23,9 @@ private:
     int endpoint_out = 0x01;
     int endpoint_in = 0x81;
     int endpoint_data = 0x82;
+
+    char buffer[32];
+    int length = 32;
 
     libusb_device_handle* handle;
     libusb_context* context;

@@ -56,11 +56,19 @@ bool DeviceControl::deviceOpen() {
 }
 
 bool DeviceControl::sendCmd(const uint8_t* command, int length) {
+    // 这里length是传入的，不是private成员
     if (!handle) {
         std::cerr << "Device not opened." << std::endl;
         return false;
     }
 
+    std::cout << "Send command: ";
+    for (int i = 0; i < length; ++i) {
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(command[i]) << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << std::dec << "Sent Length" << length << std::endl;
     int transferred;
     int result = libusb_bulk_transfer(handle, endpoint_out, const_cast<uint8_t*>(command), length, &transferred, 10);
     if (result != LIBUSB_SUCCESS) {
@@ -71,24 +79,28 @@ bool DeviceControl::sendCmd(const uint8_t* command, int length) {
     return true;
 }
 
-bool DeviceControl::receiveData(uint8_t* buffer, int length) {
+bool DeviceControl::receiveData() {
     if (!handle) {
         std::cerr << "Device not opened." << std::endl;
         return false;
     }
-
     int transferred;
     int result = libusb_bulk_transfer(handle, endpoint_in, (unsigned char*)&buffer, length, &transferred, 100);
     if (result != LIBUSB_SUCCESS) {
-        std::cerr << "Error reading data from the device." << std::endl;
+        std::cerr << "Error reading data from the device. " << libusb_strerror(static_cast<libusb_error>(result))  << std::endl;
         return false;
     }
-    std::cout << "Received: " << transferred << std::endl;
+    std::cout << "Received length: " << transferred << std::endl;
+    std::cout << "Received data:" << std::endl;
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned char>(buffer[i]) << " ";
+    }
+    std::cout << std::endl;
     return true;
 }
 
-void DeviceControl::fillUint32ToBytes(uint32_t value, uint8_t* bytes, int index) {
-    for (int i = 0; i < 4; ++i) {
-        bytes[index + i] = static_cast<uint8_t>((value >> (8 * i)) & 0xFF);
-    }
-}
+//void DeviceControl::fillUint32ToBytes(uint32_t value, uint8_t* bytes, int index) {
+//    for (int i = 0; i < 4; ++i) {
+//        bytes[index + i] = static_cast<uint8_t>((value >> (8 * i)) & 0xFF);
+//    }
+//}
