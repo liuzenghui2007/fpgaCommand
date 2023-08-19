@@ -11,8 +11,8 @@ public:
 
     void devicesList();
     bool deviceOpen();
-    bool host2Device(const uint8_t* command, int length);
-    bool device2Host(uint8_t* buffer, int length);
+    bool sendCmd(const uint8_t* command, int length);
+    bool receiveData(uint8_t* buffer, int length);
 
 private:
     const int interface_number = 0;

@@ -35,21 +35,23 @@ int main() {
     DeviceControl devCtrl;
     devCtrl.deviceOpen();
 
-    char getBuffer[100];
+    char getBuffer[1000];
     int  maxReadLength = 20;
     int ret = 0;
 
     // 清空设备缓存区
-    ret = devCtrl.device2Host((unsigned char*)&getBuffer, maxReadLength);
+    ret = devCtrl.receiveData((unsigned char*)&getBuffer, maxReadLength);
 
     printHexInGroups(getBuffer, sizeof(getBuffer));
+
+    return 0;
 
     // 读整体状态
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
 
-    ret = devCtrl.host2Device(cmd.getCommand().data(), cmd.getCommand().size());
-    ret = devCtrl.device2Host((unsigned char*)&getBuffer, maxReadLength);
+    ret = devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    ret = devCtrl.receiveData((unsigned char*)&getBuffer, maxReadLength);
 
     printHexInGroups(getBuffer, sizeof(getBuffer));
 
