@@ -19,8 +19,9 @@ private:
     const int vid = 0x0ff8;
     const int pid = 0x00ff;
 
-    int IN_ENDPOINT = 0x01;
-    int OUT_ENDPOINT = 0x81;
+
+    int OUT_ENDPOINT = 0x01;
+    int IN_ENDPOINT = 0x81;
     int DATA_ENDPOINT = 0x82;
 
     libusb_device_handle* handle;
