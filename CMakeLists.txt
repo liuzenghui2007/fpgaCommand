@@ -44,6 +44,8 @@ find_package(libusb CONFIG REQUIRED)
 
 find_package(OpenCV CONFIG REQUIRED)
 
+find_package(nlohmann_json CONFIG REQUIRED)
+
 add_executable(control main.cpp
     CommandContent.h CommandContent.cpp
     CommandRegister.h
@@ -62,3 +64,5 @@ target_include_directories(control PRIVATE ${LIBUSB_INCLUDE_DIRS})
 target_link_libraries(control ${LIBUSB_LIBRARIES})
 # 链接opencv
 target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
+
+target_link_libraries(control nlohmann_json::nlohmann_json)
