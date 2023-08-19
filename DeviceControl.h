@@ -20,11 +20,11 @@ private:
     const int pid = 0x00ff;
 
 
-    int endpoint_out = 0x01;
-    int endpoint_in = 0x81;
-    int endpoint_data = 0x82;
+    unsigned char endpoint_out = 0x01;
+    unsigned char endpoint_in = 0x81;
+    unsigned char endpoint_data = 0x82;
 
-    char buffer[32];
+    unsigned char buffer[32];
     int length = 32;
 
     libusb_device_handle* handle;

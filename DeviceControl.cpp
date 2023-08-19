@@ -4,6 +4,7 @@
 #include <string>
 #include <QString>
 #include <QByteArray>
+#include <cstddef> // For std::byte
 
 DeviceControl::DeviceControl() {
     libusb_init(&context);
@@ -97,10 +98,6 @@ bool DeviceControl::receiveData() {
     }
     std::cout << std::endl;
 
-    for (int i = 0; i < sizeof(buffer); ++i) {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(static_cast<unsigned char>(buffer[i])) << " ";
-    }
-    std::cout << std::endl;
     return true;
 }
 

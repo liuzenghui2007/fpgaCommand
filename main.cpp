@@ -23,7 +23,7 @@ int main() {
 
     // 清空设备缓存区
     // 调用读取，读取不到
-//    ret = devCtrl.receiveData((unsigned char*)&getBuffer, maxReadLength);
+//    ret = devCtrl.receiveData();
 
 
     // 读整体状态, 读不到
