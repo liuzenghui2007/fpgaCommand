@@ -93,7 +93,12 @@ bool DeviceControl::receiveData() {
     std::cout << "Received: " << transferred << std::endl;
     std::cout << "Received data:" << std::endl;
     for (int i = 0; i < sizeof(buffer); ++i) {
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(buffer[i]) << " ";
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(buffer[i]) << " ";
+    }
+    std::cout << std::endl;
+
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(static_cast<unsigned char>(buffer[i])) << " ";
     }
     std::cout << std::endl;
     return true;
