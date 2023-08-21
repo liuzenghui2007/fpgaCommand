@@ -6,47 +6,48 @@
 enum RegisterEnum : uint32_t
 {
     // AISC ADC registers
-    WRITE_ADC_SAMPLE_PERIOD_CFG_REG_32BIT = 0x00000001,    // 写：ADC采样周期配置寄存器
-    WRITE_ADC_SAMPLE_CHANNEL_CFG_REG_8X32BIT = 0x00000002, // 写：ADC每个周期内32个采样点采样通道号配置寄存器
-    WRITE_ADC_ENABLE_REG_32BIT = 0x00000003,               // 写：ADC使能寄存器
-    WRITE_ADC_OFFSETCAL_ENABLE_REG_32BIT = 0x00000004,     // 写：ADC offsetcal 使能寄存器
-    WRITE_ADC_ACQ_TIME_CFG_REG_32BIT = 0x00000005,         // 写：ADC ACQ time 配置寄存器
-    READ_ADC_SAMPLE_PERIOD_CFG_REG_32BIT = 0x80000001,     // 读：ADC采样周期状态寄存器
-    READ_ADC_SAMPLE_CHANNEL_CFG_REG_8X32BIT = 0x80000002,  // 读：ADC每个周期内32个采样点采样通道号状态寄存器
-    READ_ADC_ENABLE_REG_32BIT = 0x80000003,                // 读：ADC使能状态寄存器
-    READ_ADC_ACQ_TIME_CFG_REG_32BIT = 0x80000005,          // 读：ADC ACQ time 状态寄存器
+    WRITE_ADC_SAMPLE_PERIOD_32BIT = 0x00000001,    // 写：ADC采样周期配置寄存器
+    WRITE_ADC_SAMPLE_CHANNEL_8X32BIT = 0x00000002, // 写：ADC每个周期内32个采样点采样通道号配置寄存器
+    WRITE_ADC_ENABLE_32BIT = 0x00000003,               // 写：ADC使能寄存器
+    WRITE_ADC_OFFSETCAL_ENABLE_32BIT = 0x00000004,     // 写：ADC offsetcal 使能寄存器
+    WRITE_ADC_ACQ_TIME_32BIT = 0x00000005,         // 写：ADC ACQ time 配置寄存器
+    READ_ADC_SAMPLE_PERIOD_32BIT = 0x80000001,     // 读：ADC采样周期状态寄存器
+    READ_ADC_SAMPLE_CHANNEL_8X32BIT = 0x80000002,  // 读：ADC每个周期内32个采样点采样通道号状态寄存器
+    READ_ADC_ENABLE_32BIT = 0x80000003,                // 读：ADC使能状态寄存器
+    READ_ADC_ACQ_TIME_32BIT = 0x80000005,          // 读：ADC ACQ time 状态寄存器
 
     // ASIC CONTROL registers
-    WRITE_ASIC_CTRL_REG_32BIT = 0x01000001,                     // 写：ASIC控制寄存器, 设置工作模式
-    WRITE_ASIC_POWER_CTRL_REG_32BIT = 0x01000002,               // 写：ASIC POWER 控制寄存器
-    WRITE_ASIC_VCM_EN_CTRL_REG_32BIT = 0x01000003,              // 写：ASIC VCM_EN 控制寄存器
-    WRITE_ASIC_FC_VCOM_EN_CTRL_REG_32BIT = 0x01000004,          // 写：ASIC FC_VCOM_EN 控制寄存器
-    WRITE_ASIC_CHANNEL_STATE_CFG_REG_32X32BIT = 0x01000005,     // 写：ASIC 1024个通道开关状态配置寄存器
-    WRITE_ASIC_CHANNEL_STATE_SINGLE_CFG_REG_32BIT = 0x01000006, // 写：ASIC 单个通道开关状态配置寄存器
-    WRITE_ASIC_CHANNEL_UNBLOCK_CFG_REG_32BIT = 0x01000007,      // 写：ASIC unblock通道号配置寄存器
-    READ_ASIC_STATUS_REG_32BIT = 0x81000001,                    // 读：ASIC状态寄存器
+    WRITE_ASIC_MODE_32BIT = 0x01000001,                     // 写：ASIC控制寄存器, 设置工作模式
+    WRITE_ASIC_POWER_32BIT = 0x01000002,               // 写：ASIC POWER 控制寄存器
+    WRITE_ASIC_VCM_EN_32BIT = 0x01000003,              // 写：ASIC VCM_EN 控制寄存器
+    WRITE_ASIC_FC_VCOM_EN_32BIT = 0x01000004,          // 写：ASIC FC_VCOM_EN 控制寄存器
+    WRITE_ASIC_CHANNEL_STATE_32X32BIT = 0x01000005,     // 写：ASIC 1024个通道开关状态配置寄存器
+    WRITE_ASIC_CHANNEL_STATE_SINGLE_32BIT = 0x01000006, // 写：ASIC 单个通道开关状态配置寄存器
+    WRITE_ASIC_CHANNEL_UNBLOCK_32BIT = 0x01000007,      // 写：ASIC unblock通道号配置寄存器
+    READ_ASIC_STATUS_32BIT = 0x81000001,                    // 读：ASIC状态寄存器
 
     // ASIC cooling control registers
-    WRITE_HEATER_VOLTAGE_CFG_REG_32BIT = 0x02000001,   // 加热器电压配置寄存器, 写
-    WRITE_ASIC_TEMP_SET_REG_32BIT = 0x03000001,        // ASIC 温度设定寄存器, 写
-    READ_ASIC_TEMP_SENSOR_REG_32BIT = 0x83000001,      // ASIC 温度传感器返回值, 读
-    READ_HEATER_VOLTAGE_STATUS_REG_32BIT = 0x82000001, // 加热器电压状态寄存器, 读
+    WRITE_ASIC_HEATER_VOLTAGE_32BIT = 0x02000001,   // 加热器电压配置寄存器, 写
+    WRITE_ASIC_HEATER_TEMP_32BIT = 0x03000001,        // ASIC 温度设定寄存器, 写
+    READ_ASIC_HEATER_TEMP_32BIT = 0x83000001,      // ASIC 温度传感器返回值, 读
+    READ_ASIC_HEATER_VOLTAGE_32BIT = 0x82000001, // 加热器电压状态寄存器, 读
+
     // ASIC_VT control registers
-    WRITE_ASIC_VT_SINGLE_OUTPUT_REG_32BIT =  0x04000001,   // ASIC_VT 单次输出寄存器, 写
-    WRITE_ASIC_VT_CONT_OUTPUT_CFG_REG_32BIT =  0x04000002, // ASIC_VT 连续输出配置寄存器, 写
-    WRITE_ASIC_VT_MODE_CONTROL_REG_32BIT =  0x04000003,    // ASIC_VT 模式控制寄存器, 写
-    READ_ASIC_VT_CURRENT_VALUE_REG_32BIT =  0x84000001,    // ASIC_VT 当前值, 读
+    WRITE_ASIC_VT_OUTPUT_FIXED_32BIT =  0x04000001,   // ASIC_VT 单次输出寄存器, 写
+    WRITE_ASIC_VT_OUTPUT_WAVE_32BIT =  0x04000002, // ASIC_VT 连续输出配置寄存器, 写
+    WRITE_ASIC_VT_MODE_32BIT =  0x04000003,    // ASIC_VT 模式控制寄存器, 写
+    READ_ASIC_VT_CURRENT_VALUE_32BIT =  0x84000001,    // ASIC_VT 当前值, 读
 
     // FC_VCOM control registers
-    WRITE_FC_VCOM_FIXED_OUTPUT_REG_32BIT =  0x05000001,   // FC_VCOM 单次输出寄存器, 写
-    WRITE_FC_VCOM_CONTINUOUS_OUTPUT_CFG_REG_32BIT =  0x05000002, // FC_VCOM 连续输出配置寄存器, 写
-    WRITE_FC_VCOM_MODE_CONTROL_REG_32BIT =  0x05000003,    // FC_VCOM 模式控制寄存器, 写
-    READ_FC_VCOM_CURRENT_VALUE_REG_32BIT =  0x85000001,    // FC_VCOM 当前值, 读
+    WRITE_FC_VCOM_OUTPUT_FIXED_32BIT =  0x05000001,   // FC_VCOM 单次输出寄存器, 写
+    WRITE_FC_VCOM_OUTPUT_WAVE_32BIT =  0x05000002, // FC_VCOM 连续输出配置寄存器, 写
+    WRITE_FC_VCOM_MODE_32BIT =  0x05000003,    // FC_VCOM 模式控制寄存器, 写
+    READ_FC_VCOM_VALUE_32BIT =  0x85000001,    // FC_VCOM 当前值, 读
 
     // LED control registers
-    READ_LED_CURRENT_VALUE_REG_32BIT = 0x84000001,  // LED 电流值寄存器 32BIT[]
-    WRITE_LED_OUTPUT_STATUS_REG_32BIT = 0x06000001, // LED 输出状态, 写
-    READ_LED_STATUS_REG_32BIT = 0x86000001         // LED 状态寄存器, 读
+    READ_LED_VALUE_32BIT = 0x84000001,  // LED 电流值寄存器 32BIT[]
+    WRITE_LED_OUTPUT_32BIT = 0x06000001, // LED 输出状态, 写
+    READ_LED_OUTPUT_32BIT = 0x86000001         // LED 状态寄存器, 读
 };
 
 struct StateBitsRange {
@@ -55,17 +56,17 @@ struct StateBitsRange {
 };
 
 // 读写：ADC采样周期状态寄存器
-struct  ADC_SAMPLE_PERIOD_CFG {
+struct  ADC_SAMPLE_PERIOD {
     StateBitsRange samplePeriod;
-    ADC_SAMPLE_PERIOD_CFG() {
+    ADC_SAMPLE_PERIOD() {
         samplePeriod = {0, 31};
     }
 };
 
 //读写：ADC每个周期内32个采样点采样通道号状态寄存器
-struct ADC_SAMPLE_CHANNEL_CFG {
+struct ADC_SAMPLE_CHANNEL {
     StateBitsRange ch[32];
-    ADC_SAMPLE_CHANNEL_CFG() {
+    ADC_SAMPLE_CHANNEL() {
         for (int i = 0; i < 32; ++i) {
             ch[i] = { (32 - (i+1) ) * 8, (32 - i ) * 8 - 1};
         }
@@ -74,9 +75,9 @@ struct ADC_SAMPLE_CHANNEL_CFG {
 
 
 // 读写：配置ADC ACQ 时间，最小80ns，配置单位为12.5ns.
-struct ADC_ACQ_TIME_CFG {
+struct ADC_ACQ_TIME {
     StateBitsRange adcAcqTime;
-    ADC_ACQ_TIME_CFG() {
+    ADC_ACQ_TIME() {
         adcAcqTime = {0, 31};
     }
 };
@@ -204,10 +205,86 @@ struct ASIC_STATUS {
 
 };
 
-ADC_SAMPLE_PERIOD_CFG _AdcSamplePeriod;
-ADC_SAMPLE_CHANNEL_CFG _AdcSampleChannel;
+// asic heater
+// 读写： asic 散热控制电压
+struct ASIC_HEATER_VOLTAGE {
+    StateBitsRange voltage;
+    ASIC_HEATER_VOLTAGE() {
+        voltage = {0, 15};
+    }
+};
+
+// 读写： asic 温度
+struct ASIC_HEATER_TEMP {
+    StateBitsRange temp;
+    ASIC_HEATER_TEMP () {
+        temp = {0, 15};
+    }
+};
+
+// asic vt
+// asic vt控制
+struct ASIC_VT_OUTPUT_FIXED {
+    StateBitsRange fixed;
+    ASIC_VT_OUTPUT_FIXED() {
+        fixed = {0, 15};
+    }
+};
+
+// 128 * 32 + 1
+// 16bit一个点，可以设置256个点
+struct ASIC_VT_OUTPUT_WAVE {
+    StateBitsRange wave[256];
+    StateBitsRange period;
+    ASIC_VT_OUTPUT_WAVE() {
+        for (int i = 0; i < 256; ++i) {
+            wave[i] = {(255 - i) * 16, (256 - i) * 16 - 1};
+        }
+    }
+};
+
+// asic_vt 当前值, 和fixed一致？
+struct ASIC_VT_CURRENT {
+    StateBitsRange current;
+    ASIC_VT_CURRENT() {
+        current = {0, 15};
+    }
+};
+
+// fc vcom
+
+struct FC_VCOM_OUTPUT_FIXED {
+    StateBitsRange fixed;
+    FC_VCOM_OUTPUT_FIXED() {
+        fixed = {0, 15};
+    }
+};
+
+// 128 * 32 + 1
+// 16bit一个点，可以设置256个点
+struct FC_VCOM_OUTPUT_WAVE {
+    StateBitsRange wave[256];
+    StateBitsRange period;
+    FC_VCOM_OUTPUT_WAVE() {
+        for (int i = 0; i < 256; ++i) {
+            wave[i] = {(255 - i) * 16, (256 - i) * 16 - 1};
+        }
+    }
+};
+
+// FC_VCOM 当前值, 和fixed一致？
+struct FC_VCOM_CURRENT {
+    StateBitsRange current;
+    FC_VCOM_CURRENT() {
+        current = {0, 15};
+    }
+};
+
+
+ADC_SAMPLE_PERIOD _AdcSamplePeriod;
+ADC_SAMPLE_CHANNEL _AdcSampleChannel;
 ADC_ENABLE _AdcEnable;
-ADC_ACQ_TIME_CFG _AdcAcqTime;
+ADC_ACQ_TIME _AdcAcqTime;
 
 ASIC_CTRL _AsicControl;
 ASIC_POWER_CTRL _AsicPower;
@@ -218,11 +295,15 @@ ASIC_CHANNEL_STATE_SINGLE _asicChannelStateSingle;
 ASIC_CHANNEL_UNBLOCK _asicChannelUnblcok;
 ASIC_STATUS _asicStatus;
 
+ASIC_HEATER_VOLTAGE _asicHeaterVoltage;
+ASIC_HEATER_TEMP _asicHeaterTemp;
 
+ASIC_VT_OUTPUT_FIXED _asicVtOutputFixed;
+ASIC_VT_OUTPUT_WAVE _asicVtOutputWave;
 
-
-
-
+FC_VCOM_OUTPUT_FIXED _fcVcomOutputFixed;
+FC_VCOM_OUTPUT_WAVE _fcVcomOutputWave;
+FC_VCOM_CURRENT _fcVcomCurrent;
 
 
 #endif // COMMANDREGISTER_H

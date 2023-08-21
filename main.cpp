@@ -32,7 +32,7 @@ int main() {
 
     // 读整体状态
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
-    FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
+    FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
 
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     devCtrl.receiveData();
@@ -44,22 +44,22 @@ int main() {
     // asic power
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
-    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_CTRL_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_32BIT, cmdContent.getData());
 
 
     // asic vcm
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
-    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_VCM_EN_CTRL_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_VCM_EN_32BIT, cmdContent.getData());
 
     // asic vcom
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
-    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_FC_VCOM_EN_CTRL_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_FC_VCOM_EN_32BIT, cmdContent.getData());
 
     // asic state
     cmdContent.reset(0);
-    cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
 
     // asic init
     // set sampling rate
@@ -67,7 +67,7 @@ int main() {
     uint32_t samplingRate = 16000;
     uint32_t samplingPeriod = 1000000000/(samplingRate * 12.5);
     cmdContent.reset(samplingPeriod);
-    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_CFG_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_32BIT, cmdContent.getData());
 
     // set work mode
     // 工作模式用4个32bit设置
@@ -78,27 +78,27 @@ int main() {
         cmdContent.setBitsRange(bitIndex, 4, i);
     }
     // cmdContent.binaryShow();
-    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_CFG_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_32BIT, cmdContent.getData());
 
     // set gain 使用asic_ctrl
     cmdContent.fillContent(std::vector<uint32_t>(1, 0));
     cmdContent.setBitsRange(3, 2, 0b00); // 设置 3、4 bit 为00， 对应-1/3 mV/pA;
     cmdContent.setBitsRange(16 + 3, 2, 0b11); // 设置19、20bit 为11， 对应3、4bit生效；
-    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CTRL_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_MODE_32BIT, cmdContent.getData());
 
     // disable unblock 使用asic_ctrl
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitValue(0, 0);   // 设置0 bit为0，禁止疏通
     cmdContent.setBitValue(16 + 0, 1); // 设置对应掩码bit为1
-    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CTRL_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_MODE_32BIT, cmdContent.getData());
 
     // set protocol voltage fixed value 设定测序电压-恒定
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
-    cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_FIXED_OUTPUT_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_OUTPUT_FIXED_32BIT, cmdContent.getData());
 
     // toggle protocol voltage mode fixed value 选定测序电压-恒定
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(0, 1, 0b11); // 单次模式
-    cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_MODE_CONTROL_REG_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_MODE_32BIT, cmdContent.getData());
     return 0;
 }
