@@ -14,6 +14,10 @@
 int main() {
 //    std::vector<uint32_t> initData = {0, 0}; // 初始化数据，可根据需要修改大小
 
+    // Print the assigned values
+//    for (int i = 0; i < 32; ++i) {
+//        std::cout << "Channel " << i + 1 << ": low = " << AdcSamplePeriod.ch[i].low << ", high = " << AdcSamplePeriod.ch[i].high << std::endl;
+//    }
 
 
     DeviceControl devCtrl;

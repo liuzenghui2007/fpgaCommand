@@ -49,5 +49,21 @@ enum RegisterEnum : uint32_t
     READ_LED_STATUS_REG_32BIT = 0x86000001         // LED 状态寄存器, 读
 };
 
+struct StateBitsRange {
+    int low;
+    int high;
+};
+
+// 读：ADC采样周期状态寄存器
+struct READ_ADC_SAMPLE_PERIOD_CFG {
+    StateBitsRange ch[32];
+    READ_ADC_SAMPLE_PERIOD_CFG() {
+        for (int i = 0; i < 32; ++i) {
+            ch[i] = { (32 - (i+1) ) * 8, (32 - i ) * 8 - 1};
+        }
+    }
+};
+
+READ_ADC_SAMPLE_PERIOD_CFG AdcSamplePeriod;
 
 #endif // COMMANDREGISTER_H
