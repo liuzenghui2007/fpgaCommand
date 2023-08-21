@@ -101,8 +101,6 @@ bool DeviceControl::receiveData() {
     return true;
 }
 
-//void DeviceControl::fillUint32ToBytes(uint32_t value, uint8_t* bytes, int index) {
-//    for (int i = 0; i < 4; ++i) {
-//        bytes[index + i] = static_cast<uint8_t>((value >> (8 * i)) & 0xFF);
-//    }
-//}
+const unsigned char* DeviceControl::getBuffer() const {
+    return buffer;
+}

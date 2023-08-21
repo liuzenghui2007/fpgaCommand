@@ -3,7 +3,8 @@
 
 #include <libusb.h>
 #include <vector>
-
+// 发送命令command在外部构造
+// 接收buffer是类的私有属性
 class DeviceControl {
 public:
     DeviceControl();
@@ -13,7 +14,7 @@ public:
     bool deviceOpen();
     bool sendCmd(const uint8_t* command, int length);
     bool receiveData();
-    uint32_t extractField();
+    const unsigned char* getBuffer() const;
 
 private:
     const int interface_number = 0;
@@ -36,8 +37,6 @@ private:
 
     libusb_device_handle* handle;
     libusb_context* context;
-
-    void fillUint32ToBytes(uint32_t value, uint8_t* bytes, int index);
 };
 
 #endif // DEVICE_CONTROL_H
