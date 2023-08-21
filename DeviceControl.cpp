@@ -1,10 +1,9 @@
-#include "DeviceControl.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include <QString>
-#include <QByteArray>
 #include <cstddef> // For std::byte
+
+#include "DeviceControl.h"
 
 DeviceControl::DeviceControl() {
     libusb_init(&context);
