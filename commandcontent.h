@@ -7,6 +7,7 @@
 #include <iostream>
 #include <iomanip>
 #include <bitset>
+#include <algorithm>
 
 class CommandContent {
 private:
@@ -15,8 +16,10 @@ public:
     // 命令内容搞糟函数
     CommandContent(const CommandContent& other);
     CommandContent(const std::vector<uint32_t>& newData);
+    CommandContent(const unsigned char* bufferPtr, size_t n);
     // 根据提供的新数据填充data向量
     void fillContent(const std::vector<uint32_t>& newData);
+    void fillFromBuffer(const unsigned char* bufferPtr, size_t n);
     // 重置data向量中的所有元素为指定值
     void reset(uint32_t value);
 

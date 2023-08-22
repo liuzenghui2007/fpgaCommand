@@ -5,9 +5,48 @@ CommandContent::CommandContent(const CommandContent& other) : data(other.data) {
 
 CommandContent::CommandContent(const std::vector<uint32_t>& newData) : data(newData) {}
 
+CommandContent::CommandContent(const unsigned char* bufferPtr, size_t n) {
+    if (n % 4 != 0) {
+        throw std::invalid_argument("Length must be a multiple of 4");
+    }
+
+    data.resize(n / 4); // Assuming 4 bytes represent one uint32_t
+
+    std::transform(bufferPtr, bufferPtr + n, data.begin(), [](unsigned char byte) {
+        return static_cast<uint32_t>(byte);
+    });
+
+    // Rearrange bytes for endianness if necessary
+    for (size_t i = 0; i < data.size(); ++i) {
+        data[i] = (data[i] & 0xFF) << 24 |
+                  (data[i] & 0xFF00) << 8 |
+                  (data[i] & 0xFF0000) >> 8 |
+                  (data[i] & 0xFF000000) >> 24;
+    }
+}
+
 void CommandContent::fillContent(const std::vector<uint32_t>& newData) {
     data = newData;
 }
+
+void CommandContent::fillFromBuffer(const unsigned char* bufferPtr, size_t n) {
+    if (n % 4 != 0) {
+        throw std::invalid_argument("Length must be a multiple of 4");
+    }
+
+    data.resize(n / 4); // Assuming 4 bytes represent one uint32_t
+
+    for (size_t i = 0; i < n; i += 4) {
+        uint32_t value = (static_cast<uint32_t>(bufferPtr[i]) << 24) |
+                         (static_cast<uint32_t>(bufferPtr[i + 1]) << 16) |
+                         (static_cast<uint32_t>(bufferPtr[i + 2]) << 8) |
+                         static_cast<uint32_t>(bufferPtr[i + 3]);
+        data[i / 4] = value;
+    }
+
+
+}
+
 
 void CommandContent::setBitValue(int index, bool value) {
     int arrayIndex = index / 32;

@@ -33,14 +33,18 @@ int main() {
 
     // 读整体状态
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
+    CommandContent resContent(std::vector<uint32_t>(1, 0));
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
 
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
-
     const unsigned char* bufferPtr = devCtrl.getBuffer(); // Call the getBuffer function
-
-
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
+    resContent.hexShow();
+    int asicAt = resContent.getBitsRangeFromTo(_asicStatus.ASIC_DET.low, _asicStatus.ASIC_DET.high);
+    int asicReady = resContent.getBitsRangeFromTo(_asicStatus.ASIC_LOGIC_READY.low, _asicStatus.ASIC_LOGIC_READY.high);
+    std::cout << "asicAt=" << asicAt << std::endl;
+    std::cout << "asicReady=" << asicReady << std::endl;
 
     return 0;
     // asic on
