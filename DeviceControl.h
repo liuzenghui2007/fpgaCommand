@@ -13,7 +13,7 @@ public:
     void devicesList();
     bool deviceOpen();
     bool sendCmd(const uint8_t* command, int length);
-    bool receiveData();
+    int receiveData();
     const unsigned char* getBuffer() const;
 
 private:
@@ -32,8 +32,10 @@ private:
     // n=8, 48个字节 = 12 + 8 * 4 + 2 + 2， 中间8个uint32_t, 也就是13-48字节是返回内容， 49-50字节是出错信息
     // n=32, 144个字节 = 12 + 32 * 4 + 2 + 2， 中间32个uint32_t, 也就是13-140字节是返回内容， 141-142字节是出错信息
     // n=129, 只有写模式油
+    // 接收数据 的缓冲区、最大数量、实际传输字节
     unsigned char buffer[144];
-    int length = 20;
+    int length = 144;
+    int transferred;
 
     libusb_device_handle* handle;
     libusb_context* context;

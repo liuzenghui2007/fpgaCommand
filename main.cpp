@@ -24,6 +24,7 @@ int main() {
     devCtrl.deviceOpen();
 
     int ret = 0;
+    int transferred = 0;
 
     // 清空设备缓存区
     // 调用读取，读取不到
@@ -35,7 +36,9 @@ int main() {
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
 
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
-    devCtrl.receiveData();
+    transferred = devCtrl.receiveData();
+
+    const unsigned char* bufferPtr = devCtrl.getBuffer(); // Call the getBuffer function
 
 
 

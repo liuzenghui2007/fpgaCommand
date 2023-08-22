@@ -80,12 +80,12 @@ bool DeviceControl::sendCmd(const uint8_t* command, int length) {
     return true;
 }
 
-bool DeviceControl::receiveData() {
+int DeviceControl::receiveData() {
     if (!handle) {
         std::cerr << "Device not opened." << std::endl;
         return false;
     }
-    int transferred;
+
     int result = libusb_bulk_transfer(handle, endpoint_in, (unsigned char*)&buffer, length, &transferred, 100);
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error reading data from the device. " << libusb_strerror(static_cast<libusb_error>(result))  << std::endl;
@@ -93,12 +93,12 @@ bool DeviceControl::receiveData() {
     }
     std::cout << "Received: " << transferred << std::endl;
     std::cout << "Received data: ";
-    for (int i = 0; i < sizeof(buffer); ++i) {
+    for (int i = 0; i < transferred; ++i) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(buffer[i]) << " ";
     }
     std::cout << std::endl;
 
-    return true;
+    return transferred;
 }
 
 const unsigned char* DeviceControl::getBuffer() const {
