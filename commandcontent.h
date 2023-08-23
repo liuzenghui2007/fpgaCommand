@@ -9,14 +9,13 @@
 #include <bitset>
 #include <algorithm>
 
+#include "Types.h"
+
+
 class CommandContent {
 private:
     std::vector<uint32_t> data;
-    // 这个定义在 CommandRegister里也有一份
-    struct StateBitsRange {
-        int low;
-        int high;
-    };
+
 public:
     // 命令内容搞糟函数
     CommandContent(const CommandContent& other);

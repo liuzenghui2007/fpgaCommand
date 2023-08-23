@@ -2,6 +2,7 @@
 #define COMMANDREGISTER_H
 
 #include <cstdint>
+#include "Types.h"
 
 enum RegisterEnum : uint32_t
 {
@@ -50,10 +51,7 @@ enum RegisterEnum : uint32_t
     READ_LED_OUTPUT_32BIT = 0x86000001         // LED 状态寄存器, 读
 };
 
-struct StateBitsRange {
-    int low;
-    int high;
-};
+
 
 // 读写：ADC采样周期状态寄存器
 struct  ADC_SAMPLE_PERIOD {

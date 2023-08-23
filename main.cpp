@@ -43,7 +43,7 @@ int main() {
     resContent.hexShow();
     int asicAt = resContent.getBitsRangeFromTo(_asicStatus.ASIC_DET.low, _asicStatus.ASIC_DET.high);
     int asicReady = resContent.getBitsRangeFromTo(_asicStatus.ASIC_LOGIC_READY.low, _asicStatus.ASIC_LOGIC_READY.high);
-//    asicAt = resContent.getState(_asicStatus.ASIC_DET);
+    asicAt = resContent.getState(_asicStatus.ASIC_DET);
     std::cout << "asicAt=" << asicAt << std::endl;
     std::cout << "asicReady=" << asicReady << std::endl;
 

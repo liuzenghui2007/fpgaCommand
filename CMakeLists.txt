@@ -52,7 +52,8 @@ add_executable(control main.cpp
     FpgaCommand.h FpgaCommand.cpp
     DeviceControl.h DeviceControl.cpp
     common.h
-    common.cpp)
+    common.cpp
+    Types.h)
 
 
 target_link_libraries(control
