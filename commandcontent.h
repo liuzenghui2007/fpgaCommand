@@ -12,6 +12,11 @@
 class CommandContent {
 private:
     std::vector<uint32_t> data;
+    // 这个定义在 CommandRegister里也有一份
+    struct StateBitsRange {
+        int low;
+        int high;
+    };
 public:
     // 命令内容搞糟函数
     CommandContent(const CommandContent& other);
@@ -36,6 +41,7 @@ public:
     uint32_t getBitsRange(int startIndex, int m) const;
     uint32_t getBitsRangeFromTo(int fromIndex, int toIndex) const;
 
+    uint32_t getState(StateBitsRange range);
     // 十六进制显示 data
     void hexShow() const;
     // 二进制显示 data

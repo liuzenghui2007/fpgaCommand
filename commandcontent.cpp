@@ -118,6 +118,15 @@ uint32_t CommandContent::getBitsRangeFromTo(int fromIndex, int toIndex) const {
     return result;
 }
 
+uint32_t CommandContent::getState(StateBitsRange range) {
+    if (range.low < 0 || range.high > 31 || range.low > range.high) {
+        throw std::invalid_argument("Invalid range");
+    }
+
+    uint32_t result = getBitsRangeFromTo(range.low, range.high);
+    return result;
+}
+
 void CommandContent::hexShow() const {
     std::cout << "hex format" << '\n';
     for (const uint32_t& value : data) {
