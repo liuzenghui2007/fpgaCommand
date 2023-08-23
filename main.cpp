@@ -50,11 +50,6 @@ int main() {
 
 
 
-
-
-
-
-
     return 0;
     // asic on
     // asic power
