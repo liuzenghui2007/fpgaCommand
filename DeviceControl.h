@@ -14,7 +14,7 @@ public:
     bool deviceOpen();
     bool sendCmd(const uint8_t* command, int length);
     int receiveData();
-    const unsigned char* getBuffer() const;
+    unsigned char* getBuffer();
 
 private:
     const int interface_number = 0;

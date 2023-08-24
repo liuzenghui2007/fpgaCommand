@@ -26,37 +26,38 @@ int main() {
     int ret = 0;
     int transferred = 0;
 
-    // 清空设备缓存区
-    // 调用读取，读取不到
-//    ret = devCtrl.receiveData();
 
-
-    // 读整体状态
+    // asic status
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
     CommandContent resContent(std::vector<uint32_t>(1, 0));
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
 
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
-    const unsigned char* bufferPtr = devCtrl.getBuffer(); // Call the getBuffer function
+    unsigned char* bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
     resContent.hexShow();
-    int asicAt = resContent.getBitsRangeFromTo(_asicStatus.ASIC_DET.low, _asicStatus.ASIC_DET.high);
-    int asicReady = resContent.getBitsRangeFromTo(_asicStatus.ASIC_LOGIC_READY.low, _asicStatus.ASIC_LOGIC_READY.high);
-    asicAt = resContent.getState(_asicStatus.ASIC_DET);
-    std::cout << "asicAt=" << asicAt << std::endl;
+    int asicDet = resContent.getState(_asicStatus.ASIC_DET);
+    int asicReady = resContent.getState(_asicStatus.ASIC_LOGIC_READY);
+    std::cout << "asicAt=" << asicDet << std::endl;
     std::cout << "asicReady=" << asicReady << std::endl;
 
 
 
-
-    return 0;
     // asic on
     // asic power
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_32BIT, cmdContent.getData());
 
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
+    int asicPower = resContent.getState(_AsicPower.powerEnable);
+    std::cout << "asicPower" << asicPower <<std::endl;
+
+    return 0;
 
     // asic vcm
     cmdContent.reset(0);

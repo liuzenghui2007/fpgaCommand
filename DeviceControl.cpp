@@ -101,6 +101,6 @@ int DeviceControl::receiveData() {
     return transferred;
 }
 
-const unsigned char* DeviceControl::getBuffer() const {
+unsigned char* DeviceControl::getBuffer() {
     return buffer;
 }
