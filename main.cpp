@@ -56,7 +56,33 @@ int main() {
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
     int asicPower = resContent.getState(_AsicPower.powerEnable);
-    std::cout << "asicPower" << asicPower <<std::endl;
+    std::cout << "--asicPower" << asicPower <<std::endl;
+
+    cmdContent.reset(0);
+    cmdContent.setBitValue(0, 1);
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+
+    cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
+    asicPower = resContent.getState(_AsicPower.powerEnable);
+    std::cout << "--asicPower" << asicPower <<std::endl;
+
+    cmdContent.reset(0);
+    cmdContent.setBitValue(0, 1);
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+
+    cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
+    asicPower = resContent.getState(_AsicPower.powerEnable);
+    std::cout << "--asicPower" << asicPower <<std::endl;
 
     return 0;
 
