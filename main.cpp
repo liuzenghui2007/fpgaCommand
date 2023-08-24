@@ -28,10 +28,13 @@ int main() {
 
 
     // asic status
+    // 初始化发送内容和返回内容，uint32_t * 1, 填充为0
     CommandContent cmdContent(std::vector<uint32_t>(1, 0));
     CommandContent resContent(std::vector<uint32_t>(1, 0));
-    FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
 
+    // 查询状态-读取
+    std::cout << "查询状态" << std::endl;
+    FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
     unsigned char* bufferPtr = devCtrl.getBuffer();
@@ -41,15 +44,20 @@ int main() {
     std::cout << "asicAt=" << asicDet << std::endl;
     std::cout << "asicReady=" << asicReady << std::endl;
 
-
-
     // asic on
     // asic power
+    // asic上电-写入，返回指令+全0内容+校验信息
+    std::cout << "asic上电" << std::endl;
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_32BIT, cmdContent.getData());
-//    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
 
+
+    std::cout << "读取状态" << std::endl;
     cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
@@ -58,9 +66,9 @@ int main() {
     int asicPower = resContent.getState(_AsicPower.powerEnable);
     std::cout << "--asicPower" << asicPower <<std::endl;
 
-
-
     return 0;
+
+
 
     // asic vcm
     cmdContent.reset(0);
