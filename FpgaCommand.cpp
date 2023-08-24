@@ -49,7 +49,7 @@ void FpgaCommand::fillCommand(uint32_t commandNumber, uint32_t registerAddress, 
     command[currentIndex++] = 0x55;
     command[currentIndex++] = 0xAA;
 
-    showCommand();
+//    showCommand();
 }
 
 

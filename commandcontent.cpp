@@ -123,7 +123,7 @@ uint32_t CommandContent::getState(StateBitsRange range) {
         throw std::invalid_argument("Invalid range");
     }
 
-    std::cout << "range" << range.low << "," << range.high << std::endl;
+//    std::cout << "range" << range.low << "," << range.high << std::endl;
     uint32_t result = getBitsRangeFromTo(range.low, range.high);
     return result;
 }

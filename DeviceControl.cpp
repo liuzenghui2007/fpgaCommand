@@ -91,7 +91,7 @@ int DeviceControl::receiveData() {
         std::cerr << "Error reading data from the device. " << libusb_strerror(static_cast<libusb_error>(result))  << std::endl;
         return false;
     }
-    std::cout << "Received: " << transferred << std::endl;
+    std::cout << std::hex << "Received: " << transferred << std::endl;
     std::cout << "Received data: ";
     for (int i = 0; i < transferred; ++i) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(buffer[i]) << " ";

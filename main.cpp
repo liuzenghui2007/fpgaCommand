@@ -36,7 +36,6 @@ int main() {
     transferred = devCtrl.receiveData();
     unsigned char* bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
-    resContent.hexShow();
     int asicDet = resContent.getState(_asicStatus.ASIC_DET);
     int asicReady = resContent.getState(_asicStatus.ASIC_LOGIC_READY);
     std::cout << "asicAt=" << asicDet << std::endl;
@@ -49,7 +48,9 @@ int main() {
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
 
+    cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
     bufferPtr = devCtrl.getBuffer();
