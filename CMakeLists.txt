@@ -46,8 +46,13 @@ find_package(OpenCV CONFIG REQUIRED)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 
-#find_package(Boost REQUIRED  COMPONENTS pfr)
-#include_directories(${Boost_INCLUDE_DIRS})
+#find_package(Boost REQUIRED)
+#find_package(boost_pfr CONFIG REQUIRED)
+include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
+
+
+message(STATUS Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(control main.cpp
     CommandContent.h CommandContent.cpp
@@ -72,4 +77,4 @@ target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
 target_link_libraries(control nlohmann_json::nlohmann_json)
 
 
-#target_link_libraries(control Boost::pfr)
+#target_link_libraries(control boost_pfr)

@@ -306,13 +306,15 @@ FC_VCOM_OUTPUT_WAVE _fcVcomOutputWave;
 FC_VCOM_CURRENT _fcVcomCurrent;
 
 
-//template <typename T>
-//void fnPrintAllMembers(const T& obj, const std::string& structName) {
-//    std::cout << "Printing members of " << structName << ":" << std::endl;
+template <typename T>
+void fnPrintAllMembers(const T& obj, const std::string& structName) {
+    std::cout << "Printing members of " << structName << ":" << std::endl;
 
 //    boost::pfr::for_each_field(obj, [&structName](const auto& field) {
 //        std::cout << field << "\n";
 //    });
-//}
+}
+
+
 
 #endif // COMMANDREGISTER_H
