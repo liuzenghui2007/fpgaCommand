@@ -63,8 +63,9 @@ int main() {
     transferred = devCtrl.receiveData();
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
-    int asicPower = resContent.getState(_AsicPower.powerEnable);
-    std::cout << "--asicPower" << asicPower <<std::endl;
+    resContent.binaryShow();
+    int asicStatusPower = resContent.getState(_asicStatus.ASIC_PWR);
+    std::cout << "--asicStatusPower=" << asicStatusPower <<std::endl;
 
     return 0;
 

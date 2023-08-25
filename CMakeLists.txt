@@ -46,7 +46,8 @@ find_package(OpenCV CONFIG REQUIRED)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 
-find_package(Boost REQUIRED  COMPONENTS pfr)
+#find_package(Boost REQUIRED  COMPONENTS pfr)
+#include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(control main.cpp
     CommandContent.h CommandContent.cpp
@@ -61,7 +62,7 @@ add_executable(control main.cpp
 target_link_libraries(control
         Qt5::Core
 )
-# 包含头文件
+# 包含libusb头文件
 target_include_directories(control PRIVATE ${LIBUSB_INCLUDE_DIRS})
 # 链接libusb
 target_link_libraries(control ${LIBUSB_LIBRARIES})
@@ -71,4 +72,4 @@ target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
 target_link_libraries(control nlohmann_json::nlohmann_json)
 
 
-target_link_libraries(control Boost::boost Boost::pfr)
+#target_link_libraries(control Boost::pfr)
