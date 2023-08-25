@@ -4,5 +4,6 @@
 struct StateBitsRange {
     int low;
     int high;
+    StateBitsRange() = default;
 };
 #endif // TYPES_H

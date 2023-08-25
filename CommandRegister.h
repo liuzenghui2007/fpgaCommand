@@ -310,9 +310,9 @@ template <typename T>
 void fnPrintAllMembers(const T& obj, const std::string& structName) {
     std::cout << "Printing members of " << structName << ":" << std::endl;
 
-//    boost::pfr::for_each_field(obj, [&structName](const auto& field) {
-//        std::cout << field << "\n";
-//    });
+    boost::pfr::for_each_field(obj, [&structName](const auto& field) {
+        std::cout << field << "\n";
+    });
 }
 
 
