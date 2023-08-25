@@ -1,6 +1,8 @@
 #ifndef COMMANDREGISTER_H
 #define COMMANDREGISTER_H
 
+#include <iostream>
+#include <boost/pfr.hpp>
 #include <cstdint>
 #include "Types.h"
 
@@ -303,5 +305,14 @@ FC_VCOM_OUTPUT_FIXED _fcVcomOutputFixed;
 FC_VCOM_OUTPUT_WAVE _fcVcomOutputWave;
 FC_VCOM_CURRENT _fcVcomCurrent;
 
+
+//template <typename T>
+//void fnPrintAllMembers(const T& obj, const std::string& structName) {
+//    std::cout << "Printing members of " << structName << ":" << std::endl;
+
+//    boost::pfr::for_each_field(obj, [&structName](const auto& field) {
+//        std::cout << field << "\n";
+//    });
+//}
 
 #endif // COMMANDREGISTER_H

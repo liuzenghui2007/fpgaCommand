@@ -33,7 +33,7 @@ int main() {
     CommandContent resContent(std::vector<uint32_t>(1, 0));
 
     // 查询状态-读取
-    std::cout << "查询状态" << std::endl;
+    std::cout << "读取状态" << std::endl;
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
