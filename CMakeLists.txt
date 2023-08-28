@@ -50,8 +50,8 @@ find_package(nlohmann_json CONFIG REQUIRED)
 include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 
 
-message(STATUS Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
+#message(STATUS Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS})
+#include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(control main.cpp
     CommandContent.h CommandContent.cpp

@@ -67,7 +67,7 @@ int main() {
     int asicStatusPower = resContent.getState(_asicStatus.ASIC_PWR);
     std::cout << "--asicStatusPower=" << asicStatusPower <<std::endl;
 
-    fnPrintAllMembers(_fcVcomCurrent, "FC_VCOM_CURRENT");
+//    fnPrintAllMembers(_fcVcomCurrent, "FC_VCOM_CURRENT");
 
     return 0;
 
