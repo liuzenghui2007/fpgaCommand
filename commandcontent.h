@@ -42,9 +42,9 @@ public:
 
     uint32_t getState(StateBitsRange range);
     // 十六进制显示 data
-    void hexShow() const;
+    void showHex() const;
     // 二进制显示 data
-    void binaryShow() const;
+    void showBin() const;
 
     const std::vector<uint32_t>& getData() const;
 

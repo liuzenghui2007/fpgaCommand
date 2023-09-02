@@ -128,14 +128,14 @@ uint32_t CommandContent::getState(StateBitsRange range) {
     return result;
 }
 
-void CommandContent::hexShow() const {
+void CommandContent::showHex() const {
     std::cout << "hex format" << '\n';
     for (const uint32_t& value : data) {
         std::cout << "0x" << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << value << std::endl;
     }
 }
 
-void CommandContent::binaryShow() const {
+void CommandContent::showBin() const {
     std::cout << "binary format" << '\n';
     for (const uint32_t& value : data) {
         std::cout << std::bitset<32>(value).to_string().insert(24, " ").insert(16, " ").insert(8, " ") << '\n';
