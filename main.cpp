@@ -149,5 +149,7 @@ int main() {
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
+
+
     return 0;
 }

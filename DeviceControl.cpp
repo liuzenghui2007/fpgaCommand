@@ -104,3 +104,39 @@ int DeviceControl::receiveData() {
 unsigned char* DeviceControl::getBuffer() {
     return buffer;
 }
+
+// 静态函数
+// 将 ReadDataAsync 修改为静态成员函数，那么在函数内部无法访问非静态成员变量。
+// 为了解决这个问题，你可以将需要访问的成员变量传递给 ReadDataAsync 函数。
+// 在 DeviceControl.cpp 中实现 ReadDataAsync
+void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
+    unsigned char buffer[DeviceControl::TRANSFER_SIZE];
+    int transferred;
+
+    while (deviceControl->isReading) {
+        int result = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, buffer, DeviceControl::TRANSFER_SIZE, &(deviceControl->transferred_data), 1000);
+        if (result == 0) {
+            std::cout << "Read " << deviceControl->transferred_data << " bytes of data: ";
+            for (int i = 0; i < deviceControl->transferred_data; i++) {
+                std::cout << static_cast<int>(buffer[i]) << " ";
+            }
+            std::cout << std::endl;
+        } else {
+            std::cerr << "Failed to read data: " << libusb_error_name(result) << std::endl;
+        }
+    }
+}
+
+void DeviceControl::StartReadThread() {
+    isReading = true;
+    // 启动异步读取线程
+    // 线程函数需要是静态成员函数或者全局函数
+    std::thread readerThread(ReadDataAsync);
+
+    std::cout << "Press Enter to stop reading..." << std::endl;
+    std::cin.get();
+
+    isReading = false;
+    readerThread.join();
+}
+

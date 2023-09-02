@@ -3,6 +3,7 @@
 
 #include <libusb.h>
 #include <vector>
+#include <thread> // 读取数据流，单独启动线程
 // 发送命令command在外部构造
 // 接收buffer是类的私有属性
 class DeviceControl {
@@ -12,15 +13,19 @@ public:
 
     void devicesList();
     bool deviceOpen();
-    bool sendCmd(const uint8_t* command, int length);
-    int receiveData();
+    bool sendCmd(const uint8_t* command, int length); //0x01
+    int receiveData();     //0x81
     unsigned char* getBuffer();
+
+    // 修改 ReadDataAsync 为静态成员函数，同时添加参数
+    static void ReadDataAsync(DeviceControl* deviceControl);
+    void StartReadThread();
 
 private:
     const int interface_number = 0;
     const int vid = 0x0ff8;
     const int pid = 0x00ff;
-//    const int pid = 0x20fc;
+    // const int pid = 0x20fc;
 
 
     unsigned char endpoint_out = 0x01;
@@ -37,9 +42,13 @@ private:
     unsigned char buffer[144];
     int length = 144;
     int transferred;
+    int transferred_data;
 
-    libusb_device_handle* handle;
-    libusb_context* context;
+    libusb_device_handle* handle; // nullptr
+    libusb_context* context;      // nullptr
+
+    bool isReading = false;
+    static const int TRANSFER_SIZE = 64; // 数据包大小,数据流用
 };
 
 #endif // DEVICE_CONTROL_H
