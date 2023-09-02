@@ -150,6 +150,6 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
-
+    devCtrl.StartReadThread();
     return 0;
 }

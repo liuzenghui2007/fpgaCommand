@@ -130,8 +130,8 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
 void DeviceControl::StartReadThread() {
     isReading = true;
     // 启动异步读取线程
-    // 线程函数需要是静态成员函数或者全局函数
-    std::thread readerThread(ReadDataAsync);
+    // 传递函数指针
+    std::thread readerThread(&DeviceControl::ReadDataAsync, this);
 
     std::cout << "Press Enter to stop reading..." << std::endl;
     std::cin.get();
@@ -139,4 +139,5 @@ void DeviceControl::StartReadThread() {
     isReading = false;
     readerThread.join();
 }
+
 
