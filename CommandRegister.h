@@ -10,7 +10,7 @@ enum RegisterEnum : uint32_t
 {
     // AISC ADC registers
     WRITE_ADC_SAMPLE_PERIOD_32BIT = 0x00000001,    // 写：ADC采样周期配置寄存器
-    WRITE_ADC_SAMPLE_CHANNEL_8X32BIT = 0x00000002, // 写：ADC每个周期内32个采样点采样通道号配置寄存器
+    WRITE_ADC_SAMPLE_CHANNEL_8X32BIT = 0x00000002, // 写：ADC每个周期内32个采样点采样通道号配置寄存器,设置工作模式
     WRITE_ADC_ENABLE_32BIT = 0x00000003,               // 写：ADC使能寄存器
     WRITE_ADC_OFFSETCAL_ENABLE_32BIT = 0x00000004,     // 写：ADC offsetcal 使能寄存器
     WRITE_ADC_ACQ_TIME_32BIT = 0x00000005,         // 写：ADC ACQ time 配置寄存器
@@ -20,7 +20,7 @@ enum RegisterEnum : uint32_t
     READ_ADC_ACQ_TIME_32BIT = 0x80000005,          // 读：ADC ACQ time 状态寄存器
 
     // ASIC CONTROL registers
-    WRITE_ASIC_MODE_32BIT = 0x01000001,                     // 写：ASIC控制寄存器, 设置工作模式
+    WRITE_ASIC_CONTROL_32BIT = 0x01000001,             // 写：ASIC控制寄存器, 设置 EP 增益
     WRITE_ASIC_POWER_32BIT = 0x01000002,               // 写：ASIC POWER 控制寄存器
     WRITE_ASIC_VCM_EN_32BIT = 0x01000003,              // 写：ASIC VCM_EN 控制寄存器
     WRITE_ASIC_FC_VCOM_EN_32BIT = 0x01000004,          // 写：ASIC FC_VCOM_EN 控制寄存器

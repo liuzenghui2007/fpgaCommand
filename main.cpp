@@ -91,40 +91,63 @@ int main() {
     resContent.showBin();
 
 
-    // set work mode, 4*32bit, 4bits / channel
-    int contentLength = 4;
-    cmdContent.fillContent(std::vector<uint32_t>(contentLength, 0));
-    for (int i= 0; i < 32; i++ ) {
-        int bitIndex = 32 * contentLength - 4 * (i + 1);
-        cmdContent.setBitsRange(bitIndex, 4, i);
+    // set work mode, 8*32bit, 8bits / channel, P1000
+    int totalChannels = 32;
+    int contentLength = 8; // *32bit
+    int channelLength = 8;  // bit
+    cmdContent.fillContent(std::vector<uint32_t>(contentLength, 0)); // 构造8*32
+    for (int i= 0; i < totalChannels; i++ ) {
+        int bitIndex = 32 * contentLength - channelLength * (i + 1);
+        cmdContent.setBitsRange(bitIndex, channelLength, i);
     }
-    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_CHANNEL_8X32BIT, cmdContent.getData());
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
-    return 0;
+
 
     // set gain 使用asic_ctrl
     cmdContent.fillContent(std::vector<uint32_t>(1, 0));
     cmdContent.setBitsRange(3, 2, 0b00); // 设置 3、4 bit 为00， 对应-1/3 mV/pA;
     cmdContent.setBitsRange(16 + 3, 2, 0b11); // 设置19、20bit 为11， 对应3、4bit生效；
-    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_MODE_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CONTROL_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
+    resContent.showBin();
 
-    // disable unblock 使用asic_ctrl
+
+    // disable unblock 使用asic_ctrl,  value+mask都要设置
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitValue(0, 0);   // 设置0 bit为0，禁止疏通
     cmdContent.setBitValue(16 + 0, 1); // 设置对应掩码bit为1
-    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_MODE_32BIT, cmdContent.getData());
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CONTROL_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
+    resContent.showBin();
 
     // set protocol voltage fixed value 设定测序电压-恒定
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_OUTPUT_FIXED_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
+    resContent.showBin();
 
     // toggle protocol voltage mode fixed value 选定测序电压-恒定
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(0, 1, 0b11); // 单次模式
     cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_MODE_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
+    resContent.showBin();
     return 0;
 }
