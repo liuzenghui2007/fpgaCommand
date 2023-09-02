@@ -306,14 +306,18 @@ FC_VCOM_OUTPUT_WAVE _fcVcomOutputWave;
 FC_VCOM_CURRENT _fcVcomCurrent;
 
 
-template <typename T>
-void fnPrintAllMembers(const T& obj, const std::string& structName) {
-    std::cout << "Printing members of " << structName << ":" << std::endl;
+template<typename T>
+void printMembers(const T& data) {
+    // 使用boost::pfr获取结构体的成员数量
+    constexpr auto memberCount = boost::pfr::tuple_size<T>::value;
 
-    boost::pfr::for_each_field(obj, [&structName](const auto& field) {
-        std::cout << field << "\n";
-    });
+    // 遍历并打印每个成员的值
+    for (size_t i = 0; i < memberCount; ++i) {
+        const auto& member = boost::pfr::get<T>(data, i);
+        std::cout << "Member " << i << ": " << member << std::endl;
+    }
 }
+
 
 
 

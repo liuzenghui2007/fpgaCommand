@@ -34,6 +34,7 @@ int main() {
 
     // 查询状态-读取
     std::cout << "读取状态" << std::endl;
+    // 构造 发送 接收 解析 输出
     FpgaCommand cmd(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
@@ -57,17 +58,10 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
 
 
-    std::cout << "读取状态" << std::endl;
-    cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
-    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
-    transferred = devCtrl.receiveData();
-    bufferPtr = devCtrl.getBuffer();
-    resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
-    resContent.binaryShow();
-    int asicStatusPower = resContent.getState(_asicStatus.ASIC_PWR);
-    std::cout << "--asicStatusPower=" << asicStatusPower <<std::endl;
 
-//    fnPrintAllMembers(_fcVcomCurrent, "FC_VCOM_CURRENT");
+
+    ADC_SAMPLE_PERIOD adcSamplePeriod;
+    printMembers(adcSamplePeriod);
 
     return 0;
 
