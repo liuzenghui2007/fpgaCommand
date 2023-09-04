@@ -48,7 +48,7 @@ private:
     libusb_context* context;      // nullptr
 
     bool isReading = false;
-    static const int TRANSFER_SIZE = 64; // 数据包大小,数据流用
+    static const int TRANSFER_SIZE = 1024; // 数据包大小,数据流用
 };
 
 #endif // DEVICE_CONTROL_H
