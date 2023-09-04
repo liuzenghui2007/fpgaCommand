@@ -113,16 +113,30 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
     unsigned char buffer[DeviceControl::TRANSFER_SIZE];
     int transferred;
 
+    // 用于计算数据传输速率的变量
+    std::atomic<std::size_t> totalTransferredData;
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+
     while (deviceControl->isReading) {
         int result = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, buffer, DeviceControl::TRANSFER_SIZE, &(deviceControl->transferred_data), 1000);
         if (result == 0) {
-            std::cout << "Read " << deviceControl->transferred_data << " bytes of data: ";
-            for (int i = 0; i < deviceControl->transferred_data; i++) {
-                std::cout << static_cast<int>(buffer[i]) << " ";
-            }
-            std::cout << std::endl;
+            totalTransferredData += deviceControl->transferred_data;
         } else {
             std::cerr << "Failed to read data: " << libusb_error_name(result) << std::endl;
+        }
+
+        // 计算已经经过的时间
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
+
+        if (elapsedTime >= 1) { // 每秒输出一次
+            // 计算传输速率（MB/s）并输出
+            double transferRateMBps = static_cast<double>(totalTransferredData) / (1024 * 1024);
+            std::cout << "Transfer rate for the last second: " << transferRateMBps << " MB/s" << std::endl;
+
+            // 重置已传输的数据总量和起始时间
+            totalTransferredData = 0;
+            startTime = currentTime;
         }
     }
 }

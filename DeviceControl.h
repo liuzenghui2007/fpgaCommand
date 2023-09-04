@@ -4,6 +4,10 @@
 #include <libusb.h>
 #include <vector>
 #include <thread> // 读取数据流，单独启动线程
+#include <atomic> // For atomic flag
+#include <chrono> // For time measurement
+#include <cstdlib> // For system()
+
 // 发送命令command在外部构造
 // 接收buffer是类的私有属性
 class DeviceControl {
@@ -49,6 +53,10 @@ private:
 
     bool isReading = false;
     static const int TRANSFER_SIZE = 1024; // 数据包大小,数据流用
+
+    // 用于计算数据传输速率的变量
+    std::atomic<std::size_t> totalTransferredData;
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 };
 
 #endif // DEVICE_CONTROL_H
