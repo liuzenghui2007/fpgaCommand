@@ -7,6 +7,7 @@
 #include <atomic> // For atomic flag
 #include <chrono> // For time measurement
 #include <cstdlib> // For system()
+#include <opencv2/opencv.hpp>
 
 // 发送命令command在外部构造
 // 接收buffer是类的私有属性
@@ -26,6 +27,11 @@ public:
     void StartReadThread();
     void StartRead();
 
+    // 新增的常量成员
+    static const uint16_t P1000FrameSize = 2080;
+    static const uint16_t P1000FrameCount = 4;
+    static const uint16_t P2560FrameSize = 1312;
+    static const uint16_t P2560FrameCount = 8;
 private:
     const int interface_number = 0;
     const int vid = 0x0ff8;

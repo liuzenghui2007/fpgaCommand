@@ -25,6 +25,8 @@ public:
     void fillCommand(uint32_t commandNumber, uint32_t registerAddress, const std::vector<uint32_t>& commandContent);
     void showCommand() const;
 
+
+
 private:
     // 核心数据
     std::vector<uint8_t> command; // 使用 std::vector 代替 std::array

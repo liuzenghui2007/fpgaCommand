@@ -117,6 +117,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
     // 用于计算数据传输速率的变量
     std::atomic<std::size_t> totalTransferredData;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+    std::vector<cv::Mat> matrices;  // 存储多个矩阵的容器
 
     while (deviceControl->isReading) {
         int result = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, buffer, DeviceControl::TRANSFER_SIZE, &(deviceControl->transferred_data), 1000);
@@ -154,6 +155,10 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         if (deviceControl->transferred_data < DeviceControl::TRANSFER_SIZE) {
             deviceControl->isReading = false;
             break;
+        } else {
+            // 创建一个 cv::Mat, 将数据从缓冲区复制到 cv::Mat 对象中
+            cv::Mat mat(P1000FrameCount, P1000FrameSize, CV_8U);
+            memcpy(mat.data, buffer, P1000FrameCount * P1000FrameSize);
         }
     }
 }
