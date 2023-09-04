@@ -137,6 +137,20 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
             // 重置已传输的数据总量和起始时间
             totalTransferredData = 0;
             startTime = currentTime;
+
+            if (deviceControl->transferred_data > 8) {
+                // 打印前四个字节的十六进制值
+                for (int i = 0; i < 8; i++) {
+                    std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(buffer[i]) << " ";
+                }
+
+                std::cout << std::endl;
+            }
+        }
+        // 如果readCacheReserved为false且transferred_data小于TRANSFER_SIZE，则退出函数
+        if (deviceControl->transferred_data < DeviceControl::TRANSFER_SIZE) {
+            deviceControl->isReading = false;
+            break;
         }
     }
 }
@@ -145,7 +159,11 @@ void DeviceControl::StartReadThread() {
     isReading = true;
     // 启动异步读取线程
     // 传递函数指针
-    std::thread readerThread(&DeviceControl::ReadDataAsync, this);
+     std::thread readerThread(&DeviceControl::ReadDataAsync, this);
+    // 启动异步读取线程
+    //    std::thread readerThread([this, &stopFlag]() {
+    //        this->ReadDataAsync(this, stopFlag);
+    //    });
 
     std::cout << "Press Enter to stop reading..." << std::endl;
 
@@ -168,4 +186,9 @@ void DeviceControl::StartReadThread() {
     readerThread.join();
 }
 
+void DeviceControl::StartRead() {
+    isReading = true;
+    this->ReadDataAsync(this);
+
+}
 

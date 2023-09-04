@@ -24,6 +24,7 @@ public:
     // 修改 ReadDataAsync 为静态成员函数，同时添加参数
     static void ReadDataAsync(DeviceControl* deviceControl);
     void StartReadThread();
+    void StartRead();
 
 private:
     const int interface_number = 0;
@@ -52,7 +53,7 @@ private:
     libusb_context* context;      // nullptr
 
     bool isReading = false;
-    static const int TRANSFER_SIZE = 1024 * 8; // 数据包大小,数据流用
+    static const int TRANSFER_SIZE = 2080 * 4; // 数据包大小,数据流用
 
     // 用于计算数据传输速率的变量
     std::atomic<std::size_t> totalTransferredData;
