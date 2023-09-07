@@ -29,7 +29,7 @@ public:
 
     // 新增的常量成员
     static const uint16_t P1000FrameSize = 2080;
-    static const uint16_t P1000FrameCount = 4;
+    static const uint16_t P1000FrameCount = 1024;
     static const uint16_t P2560FrameSize = 1312;
     static const uint16_t P2560FrameCount = 8;
 private:
@@ -59,7 +59,9 @@ private:
     libusb_context* context;      // nullptr
 
     bool isReading = false;
-    static const int TRANSFER_SIZE = 2080 * 4; // 数据包大小,数据流用
+
+    unsigned char* bufferData = nullptr;
+    int buffer_size = 0;
 
     // 用于计算数据传输速率的变量
     std::atomic<std::size_t> totalTransferredData;

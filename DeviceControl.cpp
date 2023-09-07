@@ -7,6 +7,8 @@
 
 DeviceControl::DeviceControl() {
     libusb_init(&context);
+    buffer_size =  P1000FrameSize * P1000FrameCount;
+    bufferData = new unsigned char[buffer_size];
 }
 
 DeviceControl::~DeviceControl() {
@@ -14,6 +16,8 @@ DeviceControl::~DeviceControl() {
         libusb_close(handle);
     }
     libusb_exit(context);
+    // 释放 buffer 内存
+    delete[] bufferData;
 }
 
 void DeviceControl::devicesList() {
@@ -110,7 +114,6 @@ unsigned char* DeviceControl::getBuffer() {
 // 为了解决这个问题，你可以将需要访问的成员变量传递给 ReadDataAsync 函数。
 // 在 DeviceControl.cpp 中实现 ReadDataAsync
 void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
-    unsigned char buffer[DeviceControl::TRANSFER_SIZE];
     int transferred;
     int transferredTimes = 0;
 
@@ -120,7 +123,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
     std::vector<cv::Mat> matrices;  // 存储多个矩阵的容器
 
     while (deviceControl->isReading) {
-        int result = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, buffer, DeviceControl::TRANSFER_SIZE, &(deviceControl->transferred_data), 1000);
+        int result = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData, deviceControl->buffer_size, &(deviceControl->transferred_data), 1000);
         if (result == 0) {
             totalTransferredData += deviceControl->transferred_data;
             transferredTimes++;
@@ -145,20 +148,20 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
             if (deviceControl->transferred_data > 8) {
                 // 打印前四个字节的十六进制值
                 for (int i = 0; i < 8; i++) {
-                    std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(buffer[i]) << " ";
+                    std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(deviceControl->bufferData[i]) << " ";
                 }
 
                 std::cout << std::endl;
             }
         }
-        // 如果readCacheReserved为false且transferred_data小于TRANSFER_SIZE，则退出函数
-        if (deviceControl->transferred_data < DeviceControl::TRANSFER_SIZE) {
+        // 如果readCacheReserved为false且transferred_data小于buffer_size，则退出函数
+        if (deviceControl->transferred_data < deviceControl->buffer_size) {
             deviceControl->isReading = false;
             break;
         } else {
             // 创建一个 cv::Mat, 将数据从缓冲区复制到 cv::Mat 对象中
             cv::Mat mat(P1000FrameCount, P1000FrameSize, CV_8U);
-            memcpy(mat.data, buffer, P1000FrameCount * P1000FrameSize);
+            memcpy(mat.data, deviceControl->bufferData, P1000FrameCount * P1000FrameSize);
         }
     }
 }
