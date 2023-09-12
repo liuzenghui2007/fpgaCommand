@@ -46,6 +46,8 @@ find_package(OpenCV CONFIG REQUIRED)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 
+find_package(NumCpp CONFIG REQUIRED)
+
 # boost pfr只有头文件
 include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
 
@@ -75,4 +77,4 @@ target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
 
 target_link_libraries(control nlohmann_json::nlohmann_json)
 
-
+target_link_libraries(control NumCpp::NumCpp)
