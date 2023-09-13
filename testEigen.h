@@ -20,8 +20,9 @@ void testEigen() {
     Eigen::MatrixXd base(1, numCols);
     data.setRandom(); // 使用随机数填充矩阵
     base.setConstant(2.0); // 使用随机数填充基线矩阵（一维）
+    // 在循环之前计算 base 复制矩阵
+    Eigen::MatrixXd baseReplicated = base.replicate(numRows, 1).array();
 
-    std::cout << "base的shape：" << base.rows() << "x" << base.cols() << std::endl;
     while (true) {
         // 使用replicate函数将base的行复制为与data相同的行数，并且然后使用array()函数执行逐元素减法操作。
         // 确保在修改后的矩阵上执行array()操作，以便逐元素地进行减法操作。
@@ -30,7 +31,7 @@ void testEigen() {
         std::cout << data << std::endl;
 
 
-        data.array() -= base.replicate(numRows, 1).array();
+        data.array() -= baseReplicated.array();
 
         // 输出整个矩阵的所有值
         std::cout << "去基线后：" << std::endl;
