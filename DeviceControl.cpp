@@ -122,11 +122,12 @@ void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfe
     } else if (transfer->status == LIBUSB_TRANSFER_CANCELLED)
     {
         // Transfer was cancelled, do nothing
+        std::cout << "canceled" << std::endl;
     }
     else
     {
         // Handle transfer error
-        std::cout << "Transfer error: " << libusb_error_name(transfer->status);
+        std::cout << "Transfer error: " << libusb_error_name(transfer->status) << std::endl;
     }
 }
 
