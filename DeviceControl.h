@@ -23,7 +23,10 @@ public:
     unsigned char* getBuffer();
 
     // 修改 ReadDataAsync 为静态成员函数，同时添加参数
+    static std::atomic<std::size_t> totalTransferredData;
+    static void LIBUSB_CALL TransferCallback(struct libusb_transfer* transfer);
     static void ReadDataAsync(DeviceControl* deviceControl);
+
     void StartReadThread();
     void StartRead();
 
@@ -64,7 +67,7 @@ private:
     int buffer_size = 0;
 
     // 用于计算数据传输速率的变量
-    std::atomic<std::size_t> totalTransferredData;
+
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 };
 

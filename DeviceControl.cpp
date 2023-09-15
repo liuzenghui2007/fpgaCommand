@@ -109,28 +109,38 @@ unsigned char* DeviceControl::getBuffer() {
     return buffer;
 }
 
+void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
+    // 这是异步传输的回调函数，可以在这里处理传输完成后的操作
+    // 你可以将需要的处理逻辑放在这里，例如计算传输速率和处理数据
+    // 注意：在回调函数中使用std::cout等输出函数时要小心，最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
+    if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
+    {
+        // 采集无异常，重新提交transfer
+        totalTransferredData += transfer->actual_length;
+        libusb_submit_transfer(transfer);
+    }
+    return;
+}
+
 // 静态函数
 // 将 ReadDataAsync 修改为静态成员函数，那么在函数内部无法访问非静态成员变量。
 // 为了解决这个问题，你可以将需要访问的成员变量传递给 ReadDataAsync 函数。
 // 在 DeviceControl.cpp 中实现 ReadDataAsync
 void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
-    int transferred;
-    int transferredTimes = 0;
-
-    // 用于计算数据传输速率的变量
+    constexpr int NUM_ASYNC_TRANSFERS = 4; // 定义异步传输的数量
+    libusb_transfer* transfers[NUM_ASYNC_TRANSFERS];
     std::atomic<std::size_t> totalTransferredData;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::vector<cv::Mat> matrices;  // 存储多个矩阵的容器
 
-    while (deviceControl->isReading) {
-        int result = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData, deviceControl->buffer_size, &(deviceControl->transferred_data), 1000);
-        if (result == 0) {
-            totalTransferredData += deviceControl->transferred_data;
-            transferredTimes++;
-        } else {
-            std::cerr << "Failed to read data: " << libusb_error_name(result) << std::endl;
-        }
+    // 初始化异步传输
+    for (int i = 0; i < NUM_ASYNC_TRANSFERS; ++i) {
+        transfers[i] = libusb_alloc_transfer(0);
+        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData, deviceControl->buffer_size, TransferCallback, nullptr, 1000);
+        libusb_submit_transfer(transfers[i]);
+    }
 
+    while (deviceControl->isReading) {
         // 计算已经经过的时间
         auto currentTime = std::chrono::high_resolution_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
@@ -138,33 +148,22 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         if (elapsedTime >= 1) { // 每秒输出一次
             // 计算传输速率（MB/s）并输出
             double transferRateMBps = static_cast<double>(totalTransferredData) / (1024 * 1024);
-            std::cout << std::dec << "Transfer rate for the last second: " << transferRateMBps << " MB/s, " << transferredTimes << " times/s" <<std::endl;
+            std::cout << std::dec << "Transfer rate for the last second: " << transferRateMBps << " MB/s" << std::endl;
 
             // 重置已传输的数据总量和起始时间
             totalTransferredData = 0;
-            transferredTimes = 0;
             startTime = currentTime;
-
-            if (deviceControl->transferred_data > 8) {
-                // 打印前四个字节的十六进制值
-                for (int i = 0; i < 8; i++) {
-                    std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(deviceControl->bufferData[i]) << " ";
-                }
-
-                std::cout << std::endl;
-            }
-        }
-        // 如果readCacheReserved为false且transferred_data小于buffer_size，则退出函数
-        if (deviceControl->transferred_data < deviceControl->buffer_size) {
-            deviceControl->isReading = false;
-            break;
-        } else {
-            // 创建一个 cv::Mat, 将数据从缓冲区复制到 cv::Mat 对象中
-            cv::Mat mat(P1000FrameCount, P1000FrameSize, CV_8U);
-            memcpy(mat.data, deviceControl->bufferData, P1000FrameCount * P1000FrameSize);
         }
     }
+
+    // 取消和释放异步传输
+    for (int i = 0; i < NUM_ASYNC_TRANSFERS; ++i) {
+        libusb_cancel_transfer(transfers[i]);
+        libusb_free_transfer(transfers[i]);
+    }
 }
+
+
 
 void DeviceControl::StartReadThread() {
     isReading = true;
