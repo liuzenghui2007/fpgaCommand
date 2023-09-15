@@ -117,8 +117,16 @@ void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfe
     {
         // 采集无异常，重新提交transfer
         DeviceControl::totalTransferredData += transfer->actual_length;
-        std::cout << "reveived=" << transfer->actual_length << " total=" << DeviceControl::totalTransferredData << std::endl;
+        std::cout << "received=" << transfer->actual_length << " total=" << DeviceControl::totalTransferredData << std::endl;
         libusb_submit_transfer(transfer);
+    } else if (transfer->status == LIBUSB_TRANSFER_CANCELLED)
+    {
+        // Transfer was cancelled, do nothing
+    }
+    else
+    {
+        // Handle transfer error
+        std::cout << "Transfer error: " << libusb_error_name(transfer->status);
     }
 }
 
@@ -129,9 +137,6 @@ void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfe
 void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
 
     libusb_transfer* transfers[TRANSFER_NUM];
-    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
-    std::vector<cv::Mat> matrices;  // 存储多个矩阵的容器
-
     // 初始化异步传输
     for (int i = 0; i < TRANSFER_NUM; ++i) {
         transfers[i] = libusb_alloc_transfer(0);
@@ -154,6 +159,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
     }
 
     // 取消和释放异步传输
+    std::cout << "结束";
     for (int i = 0; i < TRANSFER_NUM; ++i) {
         libusb_cancel_transfer(transfers[i]);
         libusb_free_transfer(transfers[i]);
