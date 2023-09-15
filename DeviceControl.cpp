@@ -5,6 +5,8 @@
 
 #include "DeviceControl.h"
 
+std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
+
 DeviceControl::DeviceControl() {
     libusb_init(&context);
     buffer_size =  P1000FrameSize * P1000FrameCount;
@@ -113,13 +115,14 @@ void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfe
     // 这是异步传输的回调函数，可以在这里处理传输完成后的操作
     // 你可以将需要的处理逻辑放在这里，例如计算传输速率和处理数据
     // 注意：在回调函数中使用std::cout等输出函数时要小心，最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
+    std::cout << transfer->actual_length << DeviceControl::totalTransferredData << std::endl;
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         // 采集无异常，重新提交transfer
-        totalTransferredData += transfer->actual_length;
+        DeviceControl::totalTransferredData += transfer->actual_length;
+        std::cout << transfer->actual_length << DeviceControl::totalTransferredData << std::endl;
         libusb_submit_transfer(transfer);
     }
-    return;
 }
 
 // 静态函数
@@ -129,7 +132,6 @@ void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfe
 void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
     constexpr int NUM_ASYNC_TRANSFERS = 4; // 定义异步传输的数量
     libusb_transfer* transfers[NUM_ASYNC_TRANSFERS];
-    std::atomic<std::size_t> totalTransferredData;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::vector<cv::Mat> matrices;  // 存储多个矩阵的容器
 
@@ -147,11 +149,11 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
 
         if (elapsedTime >= 1) { // 每秒输出一次
             // 计算传输速率（MB/s）并输出
-            double transferRateMBps = static_cast<double>(totalTransferredData) / (1024 * 1024);
+            double transferRateMBps = static_cast<double>(DeviceControl::totalTransferredData) / (1024 * 1024);
             std::cout << std::dec << "Transfer rate for the last second: " << transferRateMBps << " MB/s" << std::endl;
 
             // 重置已传输的数据总量和起始时间
-            totalTransferredData = 0;
+            DeviceControl::totalTransferredData = 0;
             startTime = currentTime;
         }
     }
