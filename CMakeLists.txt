@@ -66,8 +66,9 @@ add_executable(control main.cpp
     common.h
     common.cpp
     Types.h
-    ncpp.h
-    testEigen.h)
+    testNumCpp.h
+    testEigen.h
+    testCvMat.h)
 
 
 target_link_libraries(control

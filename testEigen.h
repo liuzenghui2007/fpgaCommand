@@ -12,7 +12,7 @@ void testEigen() {
     constexpr uint32_t sampleRate = 1; // 平均值采样率（每秒）
 
     constexpr uint32_t numRows = 5; // 矩阵的行数
-    constexpr uint32_t numCols = 10; // 矩阵的列数
+    constexpr uint32_t numCols = 12; // 矩阵的列数
 
     const int t = 1000 / sampleRate;
 
