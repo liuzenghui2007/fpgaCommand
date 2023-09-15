@@ -21,13 +21,13 @@ void testOpenCV() {
     while (true) {
         // 原始值
         std::cout << "原始值：" << std::endl;
-                std::cout << data << std::endl;
+        std::cout << data << std::endl;
 
         data -= base; // 逐元素减法操作
 
         // 输出整个矩阵的所有值
         std::cout << "去基线后：" << std::endl;
-            std::cout << data << std::endl;
+        std::cout << data << std::endl;
 
         cv::Mat a48 = cv::Mat::zeros(1, numCols, CV_64F);
 
@@ -41,14 +41,14 @@ void testOpenCV() {
 
         std::cout << "a48的shape：" << a48.rows << "x" << a48.cols << std::endl;
 
-                    // 均值
-                    std::cout << "均值后：" << std::endl;
-                         std::cout << a48 << std::endl;
+        // 均值
+        std::cout << "均值后：" << std::endl;
+        std::cout << a48 << std::endl;
 
         // 转化，对整个向量 a48 减去 5 并乘以 2
         a48 = (a48 - 5) * 2;
         std::cout << "转电流：" << std::endl;
-                std::cout << a48 << std::endl;
+        std::cout << a48 << std::endl;
         std::cout << "----------------------------" << std::endl;
 
         // 重新设置data的随机数
