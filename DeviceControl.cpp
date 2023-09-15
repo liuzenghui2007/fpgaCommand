@@ -113,12 +113,11 @@ void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfe
     // 这是异步传输的回调函数，可以在这里处理传输完成后的操作
     // 你可以将需要的处理逻辑放在这里，例如计算传输速率和处理数据
     // 注意：在回调函数中使用std::cout等输出函数时要小心，最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
-    std::cout << transfer->actual_length << DeviceControl::totalTransferredData << std::endl;
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         // 采集无异常，重新提交transfer
         DeviceControl::totalTransferredData += transfer->actual_length;
-        std::cout << transfer->actual_length << DeviceControl::totalTransferredData << std::endl;
+        std::cout << "reveived=" << transfer->actual_length << " total=" << DeviceControl::totalTransferredData << std::endl;
         libusb_submit_transfer(transfer);
     }
 }
@@ -139,24 +138,19 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         transfers[i]->actual_length = 0;
         transfers[i]->num_iso_packets = i;
         deviceControl->bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
-        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->buffer_size, TransferCallback, nullptr, 1000);
+        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 1000);
         libusb_submit_transfer(transfers[i]);
     }
 
-    while (deviceControl->isReading) {
-        // 计算已经经过的时间
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        auto elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startTime).count();
-
-        if (elapsedTime >= 1) { // 每秒输出一次
-            // 计算传输速率（MB/s）并输出
-            double transferRateMBps = static_cast<double>(DeviceControl::totalTransferredData) / (1024 * 1024);
-            std::cout << std::dec << "Transfer rate for the last second: " << transferRateMBps << " MB/s" << std::endl;
-
-            // 重置已传输的数据总量和起始时间
-            DeviceControl::totalTransferredData = 0;
-            startTime = currentTime;
+    while (true)
+    {
+        int ret = libusb_handle_events(nullptr);
+        if (ret < 0)
+        {
+            std::cout << "Handle events error: " << libusb_error_name(ret);
+            break;
         }
+        // usleep(1);
     }
 
     // 取消和释放异步传输

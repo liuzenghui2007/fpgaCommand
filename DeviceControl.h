@@ -71,7 +71,6 @@ private:
     unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
     unsigned char* bufferData[TRANSFER_NUM];
 
-    int buffer_size = 0;
 
     // 用于计算数据传输速率的变量
 
