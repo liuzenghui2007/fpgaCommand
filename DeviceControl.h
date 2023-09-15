@@ -63,7 +63,14 @@ private:
 
     bool isReading = false;
 
-    unsigned char* bufferData = nullptr;
+
+    constexpr static int TRANSFER_NUM = 4;
+    const int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
+    const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
+    // 总buffer和分buffer指向同一片地址区域
+    unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
+    unsigned char* bufferData[TRANSFER_NUM];
+
     int buffer_size = 0;
 
     // 用于计算数据传输速率的变量

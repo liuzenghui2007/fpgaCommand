@@ -9,8 +9,6 @@ std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
 
 DeviceControl::DeviceControl() {
     libusb_init(&context);
-    buffer_size =  P1000FrameSize * P1000FrameCount;
-    bufferData = new unsigned char[buffer_size];
 }
 
 DeviceControl::~DeviceControl() {
@@ -19,7 +17,7 @@ DeviceControl::~DeviceControl() {
     }
     libusb_exit(context);
     // 释放 buffer 内存
-    delete[] bufferData;
+    delete[] bufferDataAll;
 }
 
 void DeviceControl::devicesList() {
@@ -130,15 +128,18 @@ void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfe
 // 为了解决这个问题，你可以将需要访问的成员变量传递给 ReadDataAsync 函数。
 // 在 DeviceControl.cpp 中实现 ReadDataAsync
 void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
-    constexpr int NUM_ASYNC_TRANSFERS = 4; // 定义异步传输的数量
-    libusb_transfer* transfers[NUM_ASYNC_TRANSFERS];
+
+    libusb_transfer* transfers[TRANSFER_NUM];
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::vector<cv::Mat> matrices;  // 存储多个矩阵的容器
 
     // 初始化异步传输
-    for (int i = 0; i < NUM_ASYNC_TRANSFERS; ++i) {
+    for (int i = 0; i < TRANSFER_NUM; ++i) {
         transfers[i] = libusb_alloc_transfer(0);
-        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData, deviceControl->buffer_size, TransferCallback, nullptr, 1000);
+        transfers[i]->actual_length = 0;
+        transfers[i]->num_iso_packets = i;
+        deviceControl->bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
+        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->buffer_size, TransferCallback, nullptr, 1000);
         libusb_submit_transfer(transfers[i]);
     }
 
@@ -159,7 +160,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
     }
 
     // 取消和释放异步传输
-    for (int i = 0; i < NUM_ASYNC_TRANSFERS; ++i) {
+    for (int i = 0; i < TRANSFER_NUM; ++i) {
         libusb_cancel_transfer(transfers[i]);
         libusb_free_transfer(transfers[i]);
     }
