@@ -33,7 +33,16 @@ public:
     static std::atomic<std::size_t> totalTransferredData;
     static void TransferCallback(struct libusb_transfer* transfer);
     static void ReadDataAsync(DeviceControl* deviceControl);
-
+    // 数据流部分
+    bool isReading = false;
+    const static int TRANSFER_NUM = 4;
+    const int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
+    const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
+    // 总buffer和分buffer指向同一片地址区域
+//    unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
+    unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
+//    unsigned char* bufferData[TRANSFER_NUM];
+    static unsigned char** bufferData;
     void StartReadThread();
 
 private:
@@ -61,15 +70,7 @@ private:
     int transferred = 0;   // 实际接收数据长度
 
 
-    // 数据流部分
-    bool isReading = false;
 
-    const static int TRANSFER_NUM = 4;
-    const int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
-    const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
-    // 总buffer和分buffer指向同一片地址区域
-    unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
-    unsigned char* bufferData[TRANSFER_NUM];
     int transferred_data = 0;  // 实际接收数据长度
     // 用于计算数据传输速率的变量
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;

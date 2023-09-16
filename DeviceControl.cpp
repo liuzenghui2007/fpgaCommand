@@ -6,7 +6,7 @@
 #include "DeviceControl.h"
 
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
-
+unsigned char** DeviceControl::bufferData = new unsigned char*[4];
 DeviceControl::DeviceControl() {
     libusb_init(&context);
 }
@@ -114,11 +114,19 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     // 你可以将需要的处理逻辑放在这里，例如计算传输速率和处理数据
     // 注意：在回调函数中使用std::cout等输出函数时要小心，
     // 最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
+    int i = transfer->num_iso_packets;
+    int index = (int)(DeviceControl::bufferData[i][12])*256*256*256 +(int)(DeviceControl::bufferData[i][13])*256*256+ (int)(DeviceControl::bufferData[i][14])*256 + (int)(DeviceControl::bufferData[i][15]);
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         // 采集无异常，重新提交transfer
-        DeviceControl::totalTransferredData += transfer->actual_length;
-        std::cout << "received=" << transfer->actual_length << " total=" << DeviceControl::totalTransferredData << std::endl;
+//        DeviceControl::totalTransferredData += transfer->actual_length;
+//        std::cout << std::dec << "received=" << transfer->actual_length << " total=" << DeviceControl::totalTransferredData << "index="<<index <<std::endl;
+        if(index - DeviceControl::totalTransferredData == 1024){
+            DeviceControl::totalTransferredData = index;
+        }else{
+            std::cout <<std::dec<<index <<"error"<<DeviceControl::totalTransferredData<<std::endl;
+            DeviceControl::totalTransferredData = index;
+        }
         libusb_submit_transfer(transfer);
     } else if (transfer->status == LIBUSB_TRANSFER_CANCELLED)
     {
@@ -167,7 +175,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         transfers[i]->actual_length = 0;
         transfers[i]->num_iso_packets = i;
         deviceControl->bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
-        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 1000);
+        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 0);
     }
 
     for (int i = 0; i < TRANSFER_NUM; i++)
@@ -178,7 +186,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
             std::cout << "Initial Submit transfer error: " << libusb_error_name(ret);
         }
     }
-
+    // adc使能
     while (true)
     {
         int ret = libusb_handle_events(nullptr);
@@ -199,8 +207,8 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
 void DeviceControl::StartReadThread() {
     // 启动异步读取线程
     // 传递函数指针
-    std::thread readerThread(&DeviceControl::ReadDataAsync, this);
-    readerThread.join();
+//    std::thread readerThread(&DeviceControl::ReadDataAsync, this);
+//    readerThread.join();
 }
 
 void DeviceControl::StartRead() {
