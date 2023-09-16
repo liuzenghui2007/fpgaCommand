@@ -46,8 +46,8 @@ private:
     unsigned char endpoint_in = 0x81;
     unsigned char endpoint_data = 0x82;
     // libusb公共
-    libusb_device_handle* handle; // nullptr
-    libusb_context* context;      // nullptr
+    libusb_device_handle* handle = nullptr ; // nullptr
+    libusb_context* context = nullptr;      // nullptr
 
     // 控制部分
     // 16 + n * 4, n是返回内容需要的uint32的数量
@@ -58,17 +58,19 @@ private:
     // 接收数据 的缓冲区、最大数量、实际传输字节
     unsigned char buffer[144];
     int length = 144;
-    int transferred;
-    int transferred_data;
+    int transferred = 0;
+
 
     // 数据流部分
     bool isReading = false;
+
     constexpr static int TRANSFER_NUM = 4;
     const int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 总buffer和分buffer指向同一片地址区域
     unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
     unsigned char* bufferData[TRANSFER_NUM];
+    int transferred_data = TRANSFER_SIZE;  // 缓冲区最大接收尺寸
     // 用于计算数据传输速率的变量
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 };
