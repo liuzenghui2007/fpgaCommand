@@ -145,8 +145,16 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         transfers[i]->actual_length = 0;
         transfers[i]->num_iso_packets = i;
         deviceControl->bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
-        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 1000);
-        libusb_submit_transfer(transfers[i]);
+        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 0);
+    }
+
+    for (int i = 0; i < TRANSFER_NUM; i++)
+    {
+        int ret = libusb_submit_transfer(transfers[i]);
+        if (ret != LIBUSB_SUCCESS)
+        {
+            std::cout << "Initial Submit transfer error: " << libusb_error_name(ret);
+        }
     }
 
     while (true)
@@ -162,9 +170,9 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
 
     // 取消和释放异步传输
     std::cout << "结束";
-    for (int i = 0; i < TRANSFER_NUM; ++i) {
-        libusb_cancel_transfer(transfers[i]);
-        libusb_free_transfer(transfers[i]);
+    for (auto & transfer : transfers) {
+        libusb_cancel_transfer(transfer);
+        libusb_free_transfer(transfer);
     }
 }
 
