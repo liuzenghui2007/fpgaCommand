@@ -74,8 +74,8 @@ bool DeviceControl::sendCmd(const uint8_t* command, int length) {
     }
     std::cout << std::endl;
 
-    int transferred;
-    int result = libusb_bulk_transfer(handle, endpoint_out, const_cast<uint8_t*>(command), length, &transferred, 10);
+
+    int result = libusb_bulk_transfer(handle, endpoint_out, const_cast<uint8_t*>(command), length, &transferred_data, 10);
     if (result != LIBUSB_SUCCESS) {
         std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;
@@ -109,10 +109,11 @@ unsigned char* DeviceControl::getBuffer() {
     return buffer;
 }
 
-void LIBUSB_CALL DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
+void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     // 这是异步传输的回调函数，可以在这里处理传输完成后的操作
     // 你可以将需要的处理逻辑放在这里，例如计算传输速率和处理数据
-    // 注意：在回调函数中使用std::cout等输出函数时要小心，最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
+    // 注意：在回调函数中使用std::cout等输出函数时要小心，
+    // 最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         // 采集无异常，重新提交transfer

@@ -24,7 +24,7 @@ public:
 
     // 修改 ReadDataAsync 为静态成员函数，同时添加参数
     static std::atomic<std::size_t> totalTransferredData;
-    static void LIBUSB_CALL TransferCallback(struct libusb_transfer* transfer);
+    static void TransferCallback(struct libusb_transfer* transfer);
     static void ReadDataAsync(DeviceControl* deviceControl);
 
     void StartReadThread();
