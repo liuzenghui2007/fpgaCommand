@@ -145,7 +145,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         transfers[i]->actual_length = 0;
         transfers[i]->num_iso_packets = i;
         deviceControl->bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
-        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 0);
+        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 100);
     }
 
     for (int i = 0; i < TRANSFER_NUM; i++)
