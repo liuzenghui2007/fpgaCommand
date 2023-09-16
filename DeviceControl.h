@@ -23,7 +23,7 @@ public:
     int receiveData();     //0x81
     unsigned char* getBuffer();
     void StartRead();
-
+    static void ReadDataOnce(DeviceControl* deviceControl);
     // 数据流部分
     // 新增的常量成员
     static const uint16_t P1000FrameSize = 2080;

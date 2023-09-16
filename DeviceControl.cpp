@@ -132,6 +132,28 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     }
 }
 
+void DeviceControl::ReadDataOnce(DeviceControl* deviceControl) {
+    auto startTime = std::chrono::steady_clock::now();
+    while (true) {
+        auto currentTime = std::chrono::steady_clock::now();
+        auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
+
+        if (elapsedTime >= 500)
+            break;
+
+        int transferResult = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferDataAll, deviceControl->TRANSFER_SIZE, &(deviceControl->transferred_data), 10);
+        if (transferResult == 0 && deviceControl->transferred_data != 0)
+        {
+            std::cout << "received data length=" << deviceControl->transferred_data << std::endl;
+        }
+
+        // 等待一段时间，避免while循环过于频繁占用CPU资源
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    std::cout << "read cache finished" << std::endl;
+
+}
+
 // 静态函数
 // 将 ReadDataAsync 修改为静态成员函数，那么在函数内部无法访问非静态成员变量。
 // 为了解决这个问题，你可以将需要访问的成员变量传递给 ReadDataAsync 函数。
@@ -145,7 +167,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         transfers[i]->actual_length = 0;
         transfers[i]->num_iso_packets = i;
         deviceControl->bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
-        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 100);
+        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 1000);
     }
 
     for (int i = 0; i < TRANSFER_NUM; i++)
@@ -183,7 +205,7 @@ void DeviceControl::StartReadThread() {
 
 void DeviceControl::StartRead() {
 
-    this->ReadDataAsync(this);
+    this->ReadDataOnce(this);
 
 }
 
