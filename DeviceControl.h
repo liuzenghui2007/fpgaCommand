@@ -58,7 +58,7 @@ private:
     // 接收数据 的缓冲区、最大数量、实际传输字节
     unsigned char buffer[144];
     int length = 144;
-    int transferred = 0;
+    int transferred = 0;   // 实际接收数据长度
 
 
     // 数据流部分
@@ -70,7 +70,7 @@ private:
     // 总buffer和分buffer指向同一片地址区域
     unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
     unsigned char* bufferData[TRANSFER_NUM];
-    int transferred_data = TRANSFER_SIZE;  // 缓冲区最大接收尺寸
+    int transferred_data = 0;  // 实际接收数据长度
     // 用于计算数据传输速率的变量
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 };

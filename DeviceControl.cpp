@@ -175,28 +175,9 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
 }
 
 void DeviceControl::StartReadThread() {
-    isReading = true;
     // 启动异步读取线程
     // 传递函数指针
     std::thread readerThread(&DeviceControl::ReadDataAsync, this);
-    std::cout << "Press Enter to stop reading..." << std::endl;
-
-    // 清空标准输入缓冲区
-    while (std::cin.peek() != EOF) {
-        std::cin.get();
-    }
-
-    // 循环等待空格键的按下
-    while (true) {
-        int key = getchar();
-        if (key == ' ') {
-            break;  // 如果按下空格键，退出循环
-        }
-    }
-
-    // 停止数据采集
-    isReading = false;
-
     readerThread.join();
 }
 
