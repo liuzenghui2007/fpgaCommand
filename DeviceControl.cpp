@@ -176,18 +176,11 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
     }
 }
 
-
-
 void DeviceControl::StartReadThread() {
     isReading = true;
     // 启动异步读取线程
     // 传递函数指针
-     std::thread readerThread(&DeviceControl::ReadDataAsync, this);
-    // 启动异步读取线程
-    //    std::thread readerThread([this, &stopFlag]() {
-    //        this->ReadDataAsync(this, stopFlag);
-    //    });
-
+    std::thread readerThread(&DeviceControl::ReadDataAsync, this);
     std::cout << "Press Enter to stop reading..." << std::endl;
 
     // 清空标准输入缓冲区
@@ -210,7 +203,7 @@ void DeviceControl::StartReadThread() {
 }
 
 void DeviceControl::StartRead() {
-    isReading = true;
+
     this->ReadDataAsync(this);
 
 }
