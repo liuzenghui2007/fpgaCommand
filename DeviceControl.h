@@ -16,37 +16,40 @@ public:
     DeviceControl();
     ~DeviceControl();
 
+    // 控制部分
     void devicesList();
     bool deviceOpen();
     bool sendCmd(const uint8_t* command, int length); //0x01
     int receiveData();     //0x81
     unsigned char* getBuffer();
-
-    // 修改 ReadDataAsync 为静态成员函数，同时添加参数
-    static std::atomic<std::size_t> totalTransferredData;
-    static void TransferCallback(struct libusb_transfer* transfer);
-    static void ReadDataAsync(DeviceControl* deviceControl);
-
-    void StartReadThread();
     void StartRead();
 
+    // 数据流部分
     // 新增的常量成员
     static const uint16_t P1000FrameSize = 2080;
     static const uint16_t P1000FrameCount = 1024;
     static const uint16_t P2560FrameSize = 1312;
     static const uint16_t P2560FrameCount = 8;
+    static std::atomic<std::size_t> totalTransferredData;
+    static void TransferCallback(struct libusb_transfer* transfer);
+    static void ReadDataAsync(DeviceControl* deviceControl);
+
+    void StartReadThread();
+
 private:
+    // 硬件描述
     const int interface_number = 0;
     const int vid = 0x0ff8;
     const int pid = 0x00ff;
     // const int pid = 0x20fc;
-
-
     unsigned char endpoint_out = 0x01;
     unsigned char endpoint_in = 0x81;
     unsigned char endpoint_data = 0x82;
+    // libusb公共
+    libusb_device_handle* handle; // nullptr
+    libusb_context* context;      // nullptr
 
-    // 读取结果到buffer
+    // 控制部分
     // 16 + n * 4, n是返回内容需要的uint32的数量
     // n=1, 20个字节 = 12 + 1 * 4 + 2 + 2， 中间1个uint32_t, 也就是13-16字节是返回内容， 17-18字节是出错信息
     // n=8, 48个字节 = 12 + 8 * 4 + 2 + 2， 中间8个uint32_t, 也就是13-48字节是返回内容， 49-50字节是出错信息
@@ -58,22 +61,15 @@ private:
     int transferred;
     int transferred_data;
 
-    libusb_device_handle* handle; // nullptr
-    libusb_context* context;      // nullptr
-
+    // 数据流部分
     bool isReading = false;
-
-
     constexpr static int TRANSFER_NUM = 4;
     const int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 总buffer和分buffer指向同一片地址区域
     unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
     unsigned char* bufferData[TRANSFER_NUM];
-
-
     // 用于计算数据传输速率的变量
-
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 };
 

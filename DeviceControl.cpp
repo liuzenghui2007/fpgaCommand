@@ -168,8 +168,6 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         // usleep(1);
     }
 
-    // 取消和释放异步传输
-    std::cout << "结束";
     for (auto & transfer : transfers) {
         libusb_cancel_transfer(transfer);
         libusb_free_transfer(transfer);
