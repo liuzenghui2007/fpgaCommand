@@ -17,9 +17,8 @@ public:
     ~DeviceControl();
 
     // 控制部分
-    void devicesList();
     bool deviceOpen();
-    bool sendCmd(const uint8_t* command, int length); //0x01
+    bool sendCmd(const uint8_t* command, int commandLength); //0x01
     int receiveData();     //0x81
     unsigned char* getBuffer();
     void StartRead();
@@ -43,7 +42,6 @@ public:
     unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
 //    unsigned char* bufferData[TRANSFER_NUM];
     static unsigned char** bufferData;
-    void StartReadThread();
 
 private:
     // 硬件描述
