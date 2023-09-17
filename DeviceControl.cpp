@@ -104,10 +104,15 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         index = (index << 8) | DeviceControl::bufferData[transfer_num][j];
     }
 
+
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         // 采集无异常，重新提交transfer
 //        DeviceControl::totalTransferredData += transfer->actual_length;
+        if (transfer->actual_length != DeviceControl::TRANSFER_SIZE) {
+            std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE;
+            return;
+        }
         if(index - DeviceControl::totalTransferredData == 1024){
             DeviceControl::totalTransferredData = index;
         }else{

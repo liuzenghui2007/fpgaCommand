@@ -35,7 +35,7 @@ public:
     // 数据流部分
     bool isReading = false;
     const static int TRANSFER_NUM = 4;
-    const int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
+    const static int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 总buffer和分buffer指向同一片地址区域
 //    unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
