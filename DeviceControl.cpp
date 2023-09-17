@@ -4,10 +4,24 @@
 
 #include "DeviceControl.h"
 
+
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
 unsigned char** DeviceControl::bufferData = new unsigned char*[4];
+std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
+
+TransferInfo DeviceControl::transferInfoList[4];
+
 DeviceControl::DeviceControl() {
     libusb_init(&context);
+    for (int i = 0; i < 4; i++) {
+        DeviceControl::transferInfoList[i] = {
+                std::chrono::high_resolution_clock::now(),
+                std::chrono::high_resolution_clock::now(),
+                std::chrono::high_resolution_clock::now(),
+                std::chrono::steady_clock::duration(),
+                std::chrono::steady_clock::duration()
+        };
+    }
 }
 
 DeviceControl::~DeviceControl() {
@@ -92,33 +106,37 @@ unsigned char* DeviceControl::getBuffer() {
 }
 
 void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
-    // 这是异步传输的回调函数，可以在这里处理传输完成后的操作
-    // 你可以将需要的处理逻辑放在这里，例如计算传输速率和处理数据
-    // 最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
-    int transfer_num = transfer->num_iso_packets;
-    unsigned int index = 0;
-    for (int j = 12; j < 16; j++) {
-        // 左移8位空出0，数据进入，类似掩模
-        // DeviceControl::bufferData[transfer_num][j] 只有8位，所以不会影响index前面的数据
-        // j=0高位正好放在了最低字节
-        index = (index << 8) | DeviceControl::bufferData[transfer_num][j];
-    }
-
-
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
-        // 采集无异常，重新提交transfer
-//        DeviceControl::totalTransferredData += transfer->actual_length;
+        unsigned int transfer_num = transfer->num_iso_packets;
+        unsigned int frame_no = 0;
+        for (int j = 12; j < 16; j++) {
+            frame_no = (frame_no << 8) | DeviceControl::bufferData[transfer_num][j];
+        }
+//        // 从submit到receive是transfer时间
+        DeviceControl::transferInfoList[transfer_num].receiveTime = std::chrono::steady_clock::now();
+        DeviceControl::transferInfoList[transfer_num].transferDuration = DeviceControl::transferInfoList[transfer_num].receiveTime - DeviceControl::transferInfoList[transfer_num].submitTimeLast;
+
+
         if (transfer->actual_length != DeviceControl::TRANSFER_SIZE) {
-            std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE;
+            std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE << std::endl;
             return;
         }
-        if(index - DeviceControl::totalTransferredData == 1024){
-            DeviceControl::totalTransferredData = index;
+        if(frame_no - DeviceControl::totalTransferredData == 1024){
+            DeviceControl::totalTransferredData = frame_no;
         }else{
-            std::cout <<std::dec<<index <<"error"<<DeviceControl::totalTransferredData<<std::endl;
-            DeviceControl::totalTransferredData = index;
+            std::cout <<std::dec<< frame_no <<"error"<<DeviceControl::totalTransferredData<<std::endl;
+            DeviceControl::totalTransferredData = frame_no;
         }
+        // 从receive处理到完毕是callback时间
+        DeviceControl::transferInfoList[transfer_num].callbackDuration = std::chrono::steady_clock::now() - DeviceControl::transferInfoList[transfer_num].receiveTime;
+
+//
+        std::cout << "transfer_num=" << transfer_num << " "
+        << " frame_no=" << frame_no << " "
+        << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
+        << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
+        << std::endl;
         libusb_submit_transfer(transfer);
     } else if (transfer->status == LIBUSB_TRANSFER_CANCELLED)
     {
@@ -159,6 +177,7 @@ void DeviceControl::ReadDataOnce(DeviceControl* deviceControl) {
 // 为了解决这个问题，你可以将需要访问的成员变量传递给 ReadDataAsync 函数。
 // 在 DeviceControl.cpp 中实现 ReadDataAsync
 void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
+    DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
 
     libusb_transfer* transfers[TRANSFER_NUM];
     // 初始化异步传输
@@ -170,12 +189,16 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 0);
     }
 
-    for (auto & transfer : transfers)
-    {
+    for (std::size_t i = 0; i < TRANSFER_NUM; ++i) {
+        auto &transfer = transfers[i];
         int ret = libusb_submit_transfer(transfer);
         if (ret != LIBUSB_SUCCESS)
         {
             std::cout << "Initial Submit transfer error: " << libusb_error_name(ret);
+        }
+        else {
+            // 初始化 submitTime
+            DeviceControl::transferInfoList[i].submitTimeLast = std::chrono::high_resolution_clock::now();
         }
     }
     // adc使能

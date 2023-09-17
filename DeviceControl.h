@@ -9,6 +9,14 @@
 #include <cstdlib> // For system()
 #include <opencv2/opencv.hpp>
 
+struct TransferInfo
+{
+    std::chrono::high_resolution_clock::time_point submitTime;
+    std::chrono::high_resolution_clock::time_point submitTimeLast;
+    std::chrono::high_resolution_clock::time_point receiveTime;
+    std::chrono::steady_clock::duration  transferDuration;
+    std::chrono::steady_clock::duration  callbackDuration;
+};
 // 发送命令command在外部构造
 // 接收buffer是类的私有属性
 class DeviceControl {
@@ -27,8 +35,8 @@ public:
     // 新增的常量成员
     static const uint16_t P1000FrameSize = 2080;
     static const uint16_t P1000FrameCount = 1024;
-    static const uint16_t P2560FrameSize = 1312;
-    static const uint16_t P2560FrameCount = 8;
+//    static const uint16_t P2560FrameSize = 1312;
+//    static const uint16_t P2560FrameCount = 8;
     static std::atomic<std::size_t> totalTransferredData;
     static void TransferCallback(struct libusb_transfer* transfer);
     static void ReadDataAsync(DeviceControl* deviceControl);
@@ -38,10 +46,11 @@ public:
     const static int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 总buffer和分buffer指向同一片地址区域
-//    unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
     unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
-//    unsigned char* bufferData[TRANSFER_NUM];
     static unsigned char** bufferData;
+    // 必须在类外初始化
+    static std::chrono::high_resolution_clock::time_point transferStartTime;
+    static TransferInfo transferInfoList[TRANSFER_NUM];
 
 private:
     // 硬件描述
