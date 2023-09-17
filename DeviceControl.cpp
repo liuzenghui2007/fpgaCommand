@@ -134,6 +134,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
 //
         std::cout << "transfer_num=" << transfer_num << " "
         << " frame_no=" << frame_no << " "
+        << " check=" << frame_no % 1024 << " "
         << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
         << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
         << std::endl;
