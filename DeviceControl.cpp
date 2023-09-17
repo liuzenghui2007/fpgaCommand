@@ -95,8 +95,12 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     // 这是异步传输的回调函数，可以在这里处理传输完成后的操作
     // 你可以将需要的处理逻辑放在这里，例如计算传输速率和处理数据
     // 最好使用线程安全的方式，或者将数据存储在共享的数据结构中，由主线程来输出
-    int i = transfer->num_iso_packets;
-    int index = (int)(DeviceControl::bufferData[i][12])*256*256*256 +(int)(DeviceControl::bufferData[i][13])*256*256+ (int)(DeviceControl::bufferData[i][14])*256 + (int)(DeviceControl::bufferData[i][15]);
+    int transfer_num = transfer->num_iso_packets;
+    unsigned int index = 0;
+    for (int j = 12; j < 16; j++) {
+        index = (index << 8) | DeviceControl::bufferData[transfer_num][j];
+    }
+
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         // 采集无异常，重新提交transfer
