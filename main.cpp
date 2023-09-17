@@ -185,6 +185,20 @@ int main() {
 
 //    devCtrl.StartReadThread();
 
+    // 查询状态-读取
+    std::cout << "读取状态, 清除溢出标志" << std::endl;
+    // 构造 发送 接收 解析 输出
+    cmdContent.fillContent(std::vector<uint32_t>(1,0));
+    cmd.fillCommand(1, RegisterEnum::READ_ASIC_STATUS_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 16);
+    asicDet = resContent.getState(_asicStatus.ASIC_DET);
+    asicReady = resContent.getState(_asicStatus.ASIC_LOGIC_READY);
+    resContent.showBin();
+    std::cout << "asicAt=" << asicDet << std::endl;
+    std::cout << "asicReady=" << asicReady << std::endl;
 
     std::thread readerThread(&DeviceControl::ReadDataAsync, &devCtrl);
     readerThread.detach();
