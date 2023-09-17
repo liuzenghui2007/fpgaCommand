@@ -98,6 +98,9 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     int transfer_num = transfer->num_iso_packets;
     unsigned int index = 0;
     for (int j = 12; j < 16; j++) {
+        // 左移8位空出0，数据进入，类似掩模
+        // DeviceControl::bufferData[transfer_num][j] 只有8位，所以不会影响index前面的数据
+        // j=0高位正好放在了最低字节
         index = (index << 8) | DeviceControl::bufferData[transfer_num][j];
     }
 
