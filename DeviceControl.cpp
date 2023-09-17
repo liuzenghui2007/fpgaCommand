@@ -139,6 +139,8 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
         << std::endl;
         libusb_submit_transfer(transfer);
+        DeviceControl::transferInfoList[transfer_num].submitTimeLast = std::chrono::high_resolution_clock::now();
+
     } else if (transfer->status == LIBUSB_TRANSFER_CANCELLED)
     {
         // Transfer was cancelled, do nothing
