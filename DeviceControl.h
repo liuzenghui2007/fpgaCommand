@@ -80,8 +80,6 @@ private:
     int length = 144;
     int transferred = 0;   // 实际接收数据长度
 
-
-
     int transferred_data = 0;  // 实际接收数据长度
     // 用于计算数据传输速率的变量
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;

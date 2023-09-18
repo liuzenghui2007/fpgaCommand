@@ -118,6 +118,26 @@ void DeviceControl::SaveLog(const std::string& log) {
     logFile << log << std::endl;
 }
 
+std::string subtractAndFormatTime(
+        const std::chrono::time_point<std::chrono::steady_clock>& timePoint1,
+        const std::chrono::time_point<std::chrono::steady_clock>& timePoint2) {
+
+    // 相减，得到时间间隔
+    auto time_difference = std::chrono::duration_cast<std::chrono::seconds>(timePoint1 - timePoint2);
+
+    // 计算小时、分钟和秒
+    int hours = time_difference.count() / 3600;
+    int minutes = (time_difference.count() % 3600) / 60;
+    int seconds = time_difference.count() % 60;
+
+    // 格式化为字符串
+    std::stringstream formatted_time;
+    formatted_time << std::setfill('0') << std::setw(2) << hours << ":" << std::setw(2) << minutes << ":" << std::setw(2) << seconds;
+
+    return formatted_time.str();
+}
+
+
 void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
@@ -151,6 +171,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         << " check=" << frame_no % 1024 << " "
         << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
         << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
+        << " elapsed=" << subtractAndFormatTime( std::chrono::steady_clock::now(), DeviceControl::transferStartTime)
         << std::endl;
         std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
                                  + " frame_no=" + std::to_string(frame_no) + " "
