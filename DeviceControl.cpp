@@ -4,7 +4,7 @@
 
 #include "DeviceControl.h"
 
-
+std::ofstream DeviceControl::logFile;
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
 unsigned char** DeviceControl::bufferData = new unsigned char*[4];
 std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
@@ -22,6 +22,14 @@ DeviceControl::DeviceControl() {
                 std::chrono::steady_clock::duration()
         };
     }
+    // Generate a filename with a timestamp
+    std::ostringstream logFileName;
+    auto now = std::chrono::system_clock::now();
+    auto timePoint = std::chrono::system_clock::to_time_t(now);
+    logFileName << "log_" << std::put_time(std::localtime(&timePoint), "%Y-%m-%d_%H-%M-%S") << ".txt";
+
+    // Open the log file with the generated filename
+    logFile.open(logFileName.str());
 }
 
 DeviceControl::~DeviceControl() {
@@ -31,6 +39,7 @@ DeviceControl::~DeviceControl() {
     libusb_exit(context);
     // 释放 buffer 内存
     delete[] bufferDataAll;
+    logFile.close();
 }
 
 
@@ -105,6 +114,11 @@ unsigned char* DeviceControl::getBuffer() {
     return buffer;
 }
 
+// Add the savelog method to save log information to the file
+void DeviceControl::SaveLog(const std::string& log) {
+    logFile << log << std::endl;
+}
+
 void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
@@ -139,6 +153,16 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
         << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
         << std::endl;
+        std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
+                                 + " frame_no=" + std::to_string(frame_no) + " "
+                                 + " actual_length=" + std::to_string(transfer->actual_length) + " "
+                                 + " check=" + std::to_string(frame_no % 1024) + " "
+                                 + " transfer=" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count()) + " "
+                                 + " callback=" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count());
+
+        // Save the log message to the file
+        DeviceControl::SaveLog(logMessage);
+
         libusb_submit_transfer(transfer);
         DeviceControl::transferInfoList[transfer_num].submitTimeLast = std::chrono::high_resolution_clock::now();
 

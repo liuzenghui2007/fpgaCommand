@@ -7,7 +7,9 @@
 #include <atomic> // For atomic flag
 #include <chrono> // For time measurement
 #include <cstdlib> // For system()
+#include <fstream>
 #include <opencv2/opencv.hpp>
+
 
 struct TransferInfo
 {
@@ -40,6 +42,8 @@ public:
     static std::atomic<std::size_t> totalTransferredData;
     static void TransferCallback(struct libusb_transfer* transfer);
     static void ReadDataAsync(DeviceControl* deviceControl);
+    static void SaveLog(const std::string& log);
+    static std::ofstream logFile;
     // 数据流部分
     bool isReading = false;
     const static int TRANSFER_NUM = 4;
