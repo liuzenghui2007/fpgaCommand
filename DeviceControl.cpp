@@ -5,11 +5,10 @@
 #include "DeviceControl.h"
 
 std::ofstream DeviceControl::logFile;
-std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
-unsigned char** DeviceControl::bufferData = new unsigned char*[4];
 std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
-
-TransferInfo DeviceControl::transferInfoList[4];
+std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
+unsigned char** DeviceControl::bufferData = new unsigned char*[DeviceControl::TRANSFER_NUM];
+TransferInfo DeviceControl::transferInfoList[DeviceControl::TRANSFER_NUM];
 
 DeviceControl::DeviceControl() {
     libusb_init(&context);

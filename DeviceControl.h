@@ -46,7 +46,7 @@ public:
     static std::ofstream logFile;
     // 数据流部分
     bool isReading = false;
-    const static int TRANSFER_NUM = 4;
+    const static int TRANSFER_NUM = 32;
     const static int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 总buffer和分buffer指向同一片地址区域
