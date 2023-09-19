@@ -96,6 +96,7 @@ int main() {
     cmdContent.reset(0);
     cmdContent.setBitsRange(0, 16, temperature);
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_HEATER_TEMP_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
     transferred = devCtrl.receiveData();
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
