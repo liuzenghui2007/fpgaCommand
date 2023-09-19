@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/fpgaCommand.iml" filepath="$PROJECT_DIR$/.idea/fpgaCommand.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/testLibusb.iml" filepath="$PROJECT_DIR$/.idea/testLibusb.iml" />
     </modules>
   </component>
 </project>

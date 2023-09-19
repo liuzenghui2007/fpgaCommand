@@ -1,0 +1,3 @@
+D:/testLibusb/cmake-build-debug-visual-studio/CMakeFiles/control.dir
+D:/testLibusb/cmake-build-debug-visual-studio/CMakeFiles/edit_cache.dir
+D:/testLibusb/cmake-build-debug-visual-studio/CMakeFiles/rebuild_cache.dir

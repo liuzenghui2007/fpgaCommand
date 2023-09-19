@@ -1,0 +1,7 @@
+# ninja log v5
+20	446	7167885937304224	CMakeFiles/control.dir/common.cpp.obj	eea5ddcce9676a2d
+1	882	7167885941657031	CMakeFiles/control.dir/commandcontent.cpp.obj	8744dcc510cca0fe
+32	1278	7167885945610573	CMakeFiles/control.dir/FpgaCommand.cpp.obj	5094b7e6560aed94
+43	2495	7167885957782525	CMakeFiles/control.dir/DeviceControl.cpp.obj	8736e6d218890cf9
+3	2193	7167888394968116	CMakeFiles/control.dir/main.cpp.obj	b27d6a75c24934f2
+2203	4024	7167888399768902	bin/control.exe	27f02b6227d5780b

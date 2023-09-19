@@ -30,21 +30,17 @@ project(FPGA_Command LANGUAGES CXX)
 # 设置输出目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
-
-
-find_package(Qt5  REQUIRED COMPONENTS Core Network)
-message(== CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH})
-message(CMAKE_TOOLCHAIN_FILE =${CMAKE_TOOLCHAIN_FILE})
+#set(CMAKE_AUTOMOC ON)
+#set(CMAKE_AUTORCC ON)
+#set(CMAKE_AUTOUIC ON)
+#
+#find_package(Qt5  REQUIRED COMPONENTS Core Network)
 
 find_package(libusb CONFIG REQUIRED)
 
 find_package(OpenCV CONFIG REQUIRED)
 
-find_package(nlohmann_json CONFIG REQUIRED)
+#find_package(nlohmann_json CONFIG REQUIRED)
 
 # boost pfr只有头文件
 include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
@@ -63,9 +59,9 @@ add_executable(control main.cpp
     Types.h)
 
 
-target_link_libraries(control
-        Qt5::Core
-)
+#target_link_libraries(control
+#        Qt5::Core
+#)
 # 包含libusb头文件
 target_include_directories(control PRIVATE ${LIBUSB_INCLUDE_DIRS})
 # 链接libusb
@@ -73,6 +69,6 @@ target_link_libraries(control ${LIBUSB_LIBRARIES})
 # 链接opencv
 target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
 
-target_link_libraries(control nlohmann_json::nlohmann_json)
+#target_link_libraries(control nlohmann_json::nlohmann_json)
 
 
