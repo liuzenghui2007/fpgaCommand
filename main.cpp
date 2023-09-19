@@ -90,6 +90,16 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
+    // set temperature to 38℃
+    uint8_t t = 38;
+    uint32_t temperature = 65536 * (exp((1.0/(t+273.15)-1.0/298.15)*3380)+1)/(2+exp((1.0/(t+273.15)-1.0/298.15)*3380));
+    cmdContent.reset(0);
+    cmdContent.setBitsRange(0, 16, temperature);
+    cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_HEATER_TEMP_32BIT, cmdContent.getData());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
+    resContent.showBin();
 
     // set work mode, 8*32bit, 8bits / channel, P1000
     int totalChannels = 32;
@@ -149,6 +159,8 @@ int main() {
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
+
+
 
 
     // adc enable
