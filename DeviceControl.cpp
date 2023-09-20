@@ -1,10 +1,11 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-
+#include <fstream>
 #include "DeviceControl.h"
 
 std::ofstream DeviceControl::logFile;
+std::ofstream DeviceControl::datFile;
 std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
 unsigned char** DeviceControl::bufferData = new unsigned char*[DeviceControl::TRANSFER_NUM];
@@ -23,12 +24,15 @@ DeviceControl::DeviceControl() {
     }
     // Generate a filename with a timestamp
     std::ostringstream logFileName;
+    std::ostringstream datFileName;
     auto now = std::chrono::system_clock::now();
     auto timePoint = std::chrono::system_clock::to_time_t(now);
     logFileName << "log_" << std::put_time(std::localtime(&timePoint), "%Y-%m-%d_%H-%M-%S") << ".txt";
-
+    datFileName << "log_" << std::put_time(std::localtime(&timePoint), "%Y-%m-%d_%H-%M-%S") << ".dat";
     // Open the log file with the generated filename
     logFile.open(logFileName.str());
+
+    datFile.open(datFileName.str(),std::ofstream::binary);
 }
 
 DeviceControl::~DeviceControl() {
@@ -182,6 +186,12 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
 
         // Save the log message to the file
         DeviceControl::SaveLog(logMessage);
+
+        if(frame_no % 1024!=0){
+            datFile.close();
+        }else {
+            datFile.write((char*)DeviceControl::bufferData[transfer_num],transfer->actual_length);
+        }
 
         libusb_submit_transfer(transfer);
         DeviceControl::transferInfoList[transfer_num].submitTimeLast = std::chrono::high_resolution_clock::now();
