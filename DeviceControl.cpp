@@ -56,6 +56,110 @@ bool DeviceControl::deviceOpen() {
     }
     libusb_release_interface(handle, interface_number);
     int ret = libusb_claim_interface(handle, interface_number);
+    // 获取设备描述符
+//    libusb_device **devList = NULL;
+//    ssize_t count = libusb_get_device_list(nullptr, &devList);
+//    libusb_device *dev = devList[1];
+//    struct libusb_device_descriptor deviceDescriptor;
+//    memset(&deviceDescriptor, 0, sizeof(struct libusb_device_descriptor));
+//    libusb_get_device_descriptor(dev, &deviceDescriptor);
+//    // 获取活跃的配置描述符的 bConfigurationValue
+//    uint8_t active_bConfigurationValue = 0;
+//    struct libusb_config_descriptor *configDescriptor = NULL;
+//    libusb_get_active_config_descriptor(dev, &configDescriptor);
+//    if(configDescriptor){
+//        active_bConfigurationValue = configDescriptor->bConfigurationValue;
+//        libusb_free_config_descriptor(configDescriptor);
+//        configDescriptor = NULL;
+//    }
+//    static char* speedString[] = {
+//            "未知速度",
+//            "低速(1500KBit/s)",
+//            "全速(12000KBit/s)",
+//            "高速(480000KBit/s)",
+//            "超高速(5000000KBit/s)",
+//            "超超速(10000000KBit/s)"
+//    };
+//
+//    uint8_t bus   = libusb_get_bus_number(dev);
+//    uint8_t addr  = libusb_get_device_address(dev);
+//    int     speed = libusb_get_device_speed(dev);
+//    printf("/dev/bus/usb/%03u/%03u  %s\n", bus, addr, speedString[speed]);
+//    // 获取所有配置描述符
+//    uint8_t configIndex;
+//    for(configIndex=0; configIndex<deviceDescriptor.bNumConfigurations; configIndex++){
+//        configDescriptor = NULL;
+//        libusb_get_config_descriptor(dev, configIndex, &configDescriptor);
+//        if(configDescriptor){
+//            // 活跃的配置每个字段前面加一个*号
+//            if(configDescriptor->bConfigurationValue == active_bConfigurationValue){
+//                printf("      >*configDescriptor->bLength             = %u\n",       configDescriptor->bLength);
+//                printf("       *configDescriptor->bDescriptorType     = %02X\n",     configDescriptor->bDescriptorType);
+//                printf("       *configDescriptor->wTotalLength        = %u\n",       configDescriptor->wTotalLength);
+//                printf("       *configDescriptor->bNumInterfaces      = %u\n",       configDescriptor->bNumInterfaces);
+//                printf("       *configDescriptor->bConfigurationValue = %02X\n",     configDescriptor->bConfigurationValue);
+//                printf("       *configDescriptor->iConfiguration      = %u\n",       configDescriptor->iConfiguration);
+//                printf("       *configDescriptor->bmAttributes        = %02X\n",     configDescriptor->bmAttributes);
+//                printf("       *configDescriptor->MaxPower            = %u\n", configDescriptor->MaxPower);
+//            }else{
+//                printf("      > configDescriptor->bLength             = %u\n",       configDescriptor->bLength);
+//                printf("        configDescriptor->bDescriptorType     = %02X\n",     configDescriptor->bDescriptorType);
+//                printf("        configDescriptor->wTotalLength        = %u\n",       configDescriptor->wTotalLength);
+//                printf("        configDescriptor->bNumInterfaces      = %u\n",       configDescriptor->bNumInterfaces);
+//                printf("        configDescriptor->bConfigurationValue = %02X\n",     configDescriptor->bConfigurationValue);
+//                printf("        configDescriptor->iConfiguration      = %u\n",       configDescriptor->iConfiguration);
+//                printf("        configDescriptor->bmAttributes        = %02X\n",     configDescriptor->bmAttributes);
+//                printf("        configDescriptor->MaxPower            = %u\n", configDescriptor->MaxPower);
+//            }
+//
+//            // 打印所有接口描述符
+//            int numAltsetting;
+//            int altsettingIndex;
+//            uint8_t endpointIndex;
+//            uint8_t interfaceIndex;
+//            struct libusb_endpoint_descriptor *endpointDescriptor;
+//            struct libusb_interface_descriptor *interfaceDescriptor;
+//            for(interfaceIndex=0; interfaceIndex<configDescriptor->bNumInterfaces; interfaceIndex++){
+//                numAltsetting = configDescriptor->interface[interfaceIndex].num_altsetting;
+//                printf("          > interface[%u]:numberOfAltsetting = %d\n", interfaceIndex, numAltsetting);
+//                for(altsettingIndex=0; altsettingIndex<numAltsetting; altsettingIndex++){
+//                    interfaceDescriptor = (libusb_interface_descriptor*)&(configDescriptor->interface[interfaceIndex].altsetting[altsettingIndex]);
+//                    printf("              > interfaceDescriptor->bLength            = %u\n",   interfaceDescriptor->bLength);
+//                    printf("                interfaceDescriptor->bDescriptorType    = %02X\n", interfaceDescriptor->bDescriptorType);
+//                    printf("                interfaceDescriptor->bInterfaceNumber   = %u\n",   interfaceDescriptor->bInterfaceNumber);
+//                    printf("                interfaceDescriptor->bAlternateSetting  = %u\n",   interfaceDescriptor->bAlternateSetting);
+//                    printf("                interfaceDescriptor->bNumEndpoints      = %u\n",   interfaceDescriptor->bNumEndpoints);
+//                    printf("                interfaceDescriptor->bInterfaceClass    = %02X\n", interfaceDescriptor->bInterfaceClass);
+//                    printf("                interfaceDescriptor->bInterfaceSubClass = %02X\n", interfaceDescriptor->bInterfaceSubClass);
+//                    printf("                interfaceDescriptor->bInterfaceProtocol = %02X\n", interfaceDescriptor->bInterfaceProtocol);
+//                    printf("                interfaceDescriptor->iInterface         = %u\n",   interfaceDescriptor->iInterface);
+//
+//                    // 打印所有端点描述符
+//                    if((interfaceDescriptor->bNumEndpoints) && (interfaceDescriptor->endpoint)){
+//                        for(endpointIndex=0; endpointIndex<interfaceDescriptor->bNumEndpoints; endpointIndex++){
+//                            endpointDescriptor = (libusb_endpoint_descriptor*)&(interfaceDescriptor->endpoint[endpointIndex]);
+//                            printf("                  > endpointDescriptor->bLength             = %u\n",   endpointDescriptor->bLength);
+//                            printf("                    endpointDescriptor->bDescriptorType     = %02X\n", endpointDescriptor->bDescriptorType);
+//                            printf("                    endpointDescriptor->bEndpointAddress    = %02X\n", endpointDescriptor->bEndpointAddress);
+//                            printf("                    endpointDescriptor->bmAttributes        = %02X\n", endpointDescriptor->bmAttributes);
+//                            printf("                    endpointDescriptor->wMaxPacketSize      = %u\n",   endpointDescriptor->wMaxPacketSize);
+//                            printf("                    endpointDescriptor->bInterval           = %u\n",   endpointDescriptor->bInterval);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            libusb_free_config_descriptor(configDescriptor);
+//            configDescriptor = NULL;
+//        }
+//    }
+//    libusb_open(dev, &handle);
+//    if (handle == nullptr) {
+//        std::cerr << "Device not found or cannot be opened." << std::endl;
+//        return false;
+//    }
+//    libusb_release_interface(handle, interface_number);
+//    int ret = libusb_claim_interface(handle, interface_number);
     if (ret != LIBUSB_SUCCESS)
     {
         std::cerr << "Failed to claim USB interface: " << libusb_strerror(static_cast<libusb_error>(ret)) << std::endl;
@@ -159,7 +263,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
             std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE << std::endl;
             return;
         }
-        if(frame_no - DeviceControl::totalTransferredData == 1024){
+        if(frame_no - DeviceControl::totalTransferredData == P1000FrameCount){
             DeviceControl::totalTransferredData = frame_no;
         }else{
             std::cout <<std::dec<< frame_no <<"error"<<DeviceControl::totalTransferredData<<std::endl;
@@ -172,7 +276,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         std::cout << "transfer_num=" << transfer_num << " "
         << " frame_no=" << frame_no << " "
         << " actual_length=" <<  transfer->actual_length << " "
-        << " check=" << frame_no % 1024 << " "
+        << " check=" << frame_no % P1000FrameCount << " "
         << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
         << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
         << " elapsed=" << subtractAndFormatTime( std::chrono::steady_clock::now(), DeviceControl::transferStartTime)
@@ -245,11 +349,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         transfers[i]->num_iso_packets = i;
         DeviceControl::bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
         libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 0);
-    }
-
-    for (std::size_t i = 0; i < TRANSFER_NUM; ++i) {
-        auto &transfer = transfers[i];
-        int ret = libusb_submit_transfer(transfer);
+        int ret = libusb_submit_transfer(transfers[i]);
         if (ret != LIBUSB_SUCCESS)
         {
             std::cout << "Initial Submit transfer error: " << libusb_error_name(ret);
@@ -259,6 +359,19 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
             DeviceControl::transferInfoList[i].submitTimeLast = std::chrono::high_resolution_clock::now();
         }
     }
+
+//    for (std::size_t i = 0; i < TRANSFER_NUM; ++i) {
+//        auto &transfer = transfers[i];
+//        int ret = libusb_submit_transfer(transfer);
+//        if (ret != LIBUSB_SUCCESS)
+//        {
+//            std::cout << "Initial Submit transfer error: " << libusb_error_name(ret);
+//        }
+//        else {
+//            // 初始化 submitTime
+//            DeviceControl::transferInfoList[i].submitTimeLast = std::chrono::high_resolution_clock::now();
+//        }
+//    }
     // adc使能
     while (true)
     {
