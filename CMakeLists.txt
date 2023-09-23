@@ -13,10 +13,16 @@ if (WIN32)
     add_definitions(-D_WIN32_WINNT=0x600)
 endif()
 
-# For macOS and Linux (including Ubuntu)
-if (APPLE OR UNIX)
+# For Linux
+if (UNIX)
     set(VCPKG_HOME "$ENV{HOME}/vcpkg")
     set(CMAKE_PREFIX_PATH  $ENV{HOME}/Qt/5.15.2/gcc_64/lib/cmake/Qt5)
+endif()
+
+# For macOS
+if (APPLE)
+    set(VCPKG_HOME "$ENV{HOME}/vcpkg")
+    set(CMAKE_PREFIX_PATH  $ENV{HOME}/Qt/5.15.2/clang_64/lib/cmake/Qt5)
 endif()
 
 # 首选C++17，没有会使用上一个版本off
