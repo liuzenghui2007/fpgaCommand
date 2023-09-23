@@ -1,0 +1,110 @@
+{
+  "$schema": "https://raw.githubusercontent.com/spdx/spdx-spec/v2.2.1/schemas/spdx-schema.json",
+  "spdxVersion": "SPDX-2.2",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "documentNamespace": "https://spdx.org/spdxdocs/numcpp-x64-osx-2.10.1-9f9f5a8c-02fd-425f-93b7-48ccab816954",
+  "name": "numcpp:x64-osx@2.10.1 6b8f708ffa1cad2c380746afd4d3a03e79d4e134a60b665f0f6e0715305701ef",
+  "creationInfo": {
+    "creators": [
+      "Tool: vcpkg-9990a4c9026811a312cb2af78bf77f3d9d288416"
+    ],
+    "created": "2023-09-11T22:25:17Z"
+  },
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "GENERATES",
+      "relatedSpdxElement": "SPDXRef-binary"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-0"
+    },
+    {
+      "spdxElementId": "SPDXRef-port",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-file-1"
+    },
+    {
+      "spdxElementId": "SPDXRef-binary",
+      "relationshipType": "GENERATED_FROM",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-0",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    },
+    {
+      "spdxElementId": "SPDXRef-file-1",
+      "relationshipType": "CONTAINED_BY",
+      "relatedSpdxElement": "SPDXRef-port"
+    }
+  ],
+  "packages": [
+    {
+      "name": "numcpp",
+      "SPDXID": "SPDXRef-port",
+      "versionInfo": "2.10.1",
+      "downloadLocation": "git+https://github.com/Microsoft/vcpkg#ports/numcpp",
+      "homepage": "https://dpilger26.github.io/NumCpp",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "description": "C++ implementation of the Python Numpy library",
+      "comment": "This is the port (recipe) consumed by vcpkg."
+    },
+    {
+      "name": "numcpp:x64-osx",
+      "SPDXID": "SPDXRef-binary",
+      "versionInfo": "6b8f708ffa1cad2c380746afd4d3a03e79d4e134a60b665f0f6e0715305701ef",
+      "downloadLocation": "NONE",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "comment": "This is a binary package built by vcpkg."
+    },
+    {
+      "SPDXID": "SPDXRef-resource-1",
+      "name": "dpilger26/NumCpp",
+      "downloadLocation": "git+https://github.com/dpilger26/NumCpp@Version_${VERSION}",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "checksums": [
+        {
+          "algorithm": "SHA512",
+          "checksumValue": "8474e38b2522b52235b38abb556c60284b7c44861b450f310bfa1a66938053006e47dde9106c73dad843bf049a2dd8988cbe2d2ba747a86f548c1f356f39e081"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "fileName": ".//Users/liu/vcpkg/ports/numcpp/portfile.cmake",
+      "SPDXID": "SPDXRef-file-0",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "fd9665afc829429897fbd778b9627bce12801be6544f603e54b4d8fe368ddea8"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "fileName": ".//Users/liu/vcpkg/ports/numcpp/vcpkg.json",
+      "SPDXID": "SPDXRef-file-1",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "29d68494ed8c192c57a7ec494ebff7ecbf5d55d361217ff0a1934e1894673623"
+        }
+      ],
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION"
+    }
+  ]
+}

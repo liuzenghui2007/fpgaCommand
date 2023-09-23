@@ -25,6 +25,8 @@ if (APPLE)
     set(CMAKE_PREFIX_PATH  $ENV{HOME}/Qt/5.15.2/clang_64/lib/cmake/Qt5)
 endif()
 
+message(status VCPKG_HOME= ${VCPKG_HOME})
+
 # 首选C++17，没有会使用上一个版本off
 set(CMAKE_CXX_STANDARD 17 REQUIRED)
 
@@ -50,7 +52,7 @@ find_package(libusb CONFIG REQUIRED)
 
 find_package(OpenCV CONFIG REQUIRED)
 
-find_package(nlohmann_json CONFIG REQUIRED)
+#find_package(nlohmann_json CONFIG REQUIRED)
 
 find_package(NumCpp CONFIG REQUIRED)
 
@@ -87,7 +89,7 @@ target_link_libraries(control ${LIBUSB_LIBRARIES})
 # 链接opencv
 target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
 
-target_link_libraries(control nlohmann_json::nlohmann_json)
+#target_link_libraries(control nlohmann_json::nlohmann_json)
 
 target_link_libraries(control NumCpp::NumCpp)
 
