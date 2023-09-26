@@ -159,7 +159,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
             std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE << std::endl;
             return;
         }
-        if(frame_no - DeviceControl::totalTransferredData == 1024){
+        if(frame_no - DeviceControl::totalTransferredData == P1000FrameCount){
             DeviceControl::totalTransferredData = frame_no;
         }else{
             std::cout <<std::dec<< frame_no <<"error"<<DeviceControl::totalTransferredData<<std::endl;
@@ -172,7 +172,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         std::cout << "transfer_num=" << transfer_num << " "
         << " frame_no=" << frame_no << " "
         << " actual_length=" <<  transfer->actual_length << " "
-        << " check=" << frame_no % 1024 << " "
+        << " check=" << frame_no % P1000FrameCount << " "
         << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
         << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
         << " elapsed=" << subtractAndFormatTime( std::chrono::steady_clock::now(), DeviceControl::transferStartTime)
@@ -180,14 +180,14 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
                                  + " frame_no=" + std::to_string(frame_no) + " "
                                  + " actual_length=" + std::to_string(transfer->actual_length) + " "
-                                 + " check=" + std::to_string(frame_no % 1024) + " "
+                                 + " check=" + std::to_string(frame_no % P1000FrameCount) + " "
                                  + " transfer=" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count()) + " "
                                  + " callback=" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count());
 
         // Save the log message to the file
         DeviceControl::SaveLog(logMessage);
 
-        if(frame_no % 1024!=0){
+        if(frame_no % P1000FrameCount!=0){
             datFile.close();
         }else {
             datFile.write((char*)DeviceControl::bufferData[transfer_num],transfer->actual_length);
