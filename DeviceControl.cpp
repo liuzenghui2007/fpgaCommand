@@ -187,11 +187,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         // Save the log message to the file
         DeviceControl::SaveLog(logMessage);
 
-        if(frame_no % P1000FrameCount!=0){
-            datFile.close();
-        }else {
-            datFile.write((char*)DeviceControl::bufferData[transfer_num],transfer->actual_length);
-        }
+        datFile.write((char*)DeviceControl::bufferData[transfer_num],transfer->actual_length);
 
         libusb_submit_transfer(transfer);
         DeviceControl::transferInfoList[transfer_num].submitTimeLast = std::chrono::high_resolution_clock::now();
