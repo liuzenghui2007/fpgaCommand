@@ -264,7 +264,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
             std::cout << "Handle events error: " << libusb_error_name(ret);
             break;
         }
-        // usleep(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
 //    while (true) {

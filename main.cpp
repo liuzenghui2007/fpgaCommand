@@ -1,8 +1,5 @@
 #include <iostream>
-#include <iomanip>
 #include <vector>
-#include <stdexcept>
-#include <bitset>
 
 #include "CommandRegister.h"
 #include "CommandContent.h"
@@ -21,7 +18,6 @@ int main() {
     DeviceControl devCtrl;
     devCtrl.deviceOpen();
 
-    int ret = 0;
     int transferred = 0;
 
 
@@ -80,7 +76,7 @@ int main() {
 
     // asic init
     // set sampling rate, uint is ns 1s=10^9ns
-    uint32_t samplingRate = 30000;
+    uint32_t samplingRate = 24000;
     uint32_t samplingPeriod = 1000000000/(samplingRate * 12.5);
     cmdContent.reset(samplingPeriod);
     cmd.fillCommand(1, RegisterEnum::WRITE_ADC_SAMPLE_PERIOD_32BIT, cmdContent.getData());
@@ -214,8 +210,7 @@ int main() {
     std::cout << "asicReady=" << asicReady << std::endl;
 
     std::thread readerThread(&DeviceControl::ReadDataAsync, &devCtrl);
-    readerThread.detach();
-    Sleep(1000);
+
     // adc enable
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(0, 1, 0b1); // adc 采样使能
@@ -226,6 +221,6 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
-    Sleep(10000000000);
+    readerThread.join();
     return 0;
 }
