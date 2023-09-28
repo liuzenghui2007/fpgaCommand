@@ -123,8 +123,8 @@ void DeviceControl::SaveLog(const std::string& log) {
 }
 
 std::string subtractAndFormatTime(
-        const std::chrono::time_point<std::chrono::steady_clock>& timePoint1,
-        const std::chrono::time_point<std::chrono::steady_clock>& timePoint2) {
+        const std::chrono::time_point<std::chrono::high_resolution_clock>& timePoint1,
+        const std::chrono::time_point<std::chrono::high_resolution_clock>& timePoint2) {
 
     // 相减，得到时间间隔
     auto time_difference = std::chrono::duration_cast<std::chrono::seconds>(timePoint1 - timePoint2);
@@ -151,7 +151,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
             frame_no = (frame_no << 8) | DeviceControl::bufferData[transfer_num][j];
         }
 //        // 从submit到receive是transfer时间
-        DeviceControl::transferInfoList[transfer_num].receiveTime = std::chrono::steady_clock::now();
+        DeviceControl::transferInfoList[transfer_num].receiveTime = std::chrono::high_resolution_clock ::now();
         DeviceControl::transferInfoList[transfer_num].transferDuration = DeviceControl::transferInfoList[transfer_num].receiveTime - DeviceControl::transferInfoList[transfer_num].submitTimeLast;
 
 
@@ -166,7 +166,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
             DeviceControl::totalTransferredData = frame_no;
         }
         // 从receive处理到完毕是callback时间
-        DeviceControl::transferInfoList[transfer_num].callbackDuration = std::chrono::steady_clock::now() - DeviceControl::transferInfoList[transfer_num].receiveTime;
+        DeviceControl::transferInfoList[transfer_num].callbackDuration = std::chrono::high_resolution_clock ::now() - DeviceControl::transferInfoList[transfer_num].receiveTime;
 
 //
         std::cout << "transfer_num=" << transfer_num << " "
@@ -175,7 +175,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         << " check=" << frame_no % P1000FrameCount << " "
         << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
         << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
-        << " elapsed=" << subtractAndFormatTime( std::chrono::steady_clock::now(), DeviceControl::transferStartTime)
+        << " elapsed=" << subtractAndFormatTime( std::chrono::high_resolution_clock::now(), DeviceControl::transferStartTime)
         << std::endl;
         std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
                                  + " frame_no=" + std::to_string(frame_no) + " "
