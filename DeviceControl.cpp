@@ -266,26 +266,26 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         }
     }
 
-    while (!exitRequested)
-    {
-        int ret = libusb_handle_events(nullptr);
-        if (ret < 0)
-        {
-            std::cout << "Handle events error: " << libusb_error_name(ret);
-            break;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-
-//    while (true) {
-//        int ret = libusb_handle_events_completed(nullptr, nullptr);
-//        if (ret < 0) {
-//            std::cerr << "Handle events error: " << libusb_error_name(ret) << std::endl;
+//    while (!exitRequested)
+//    {
+//        int ret = libusb_handle_events(nullptr);
+//        if (ret < 0)
+//        {
+//            std::cout << "Handle events error: " << libusb_error_name(ret);
 //            break;
 //        }
-//        // 在处理事件之间加入一些延时，以避免过于频繁地检查事件, ms
 //        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 //    }
+
+    while (!exitRequested) {
+        int ret = libusb_handle_events_completed(nullptr, nullptr);
+        if (ret < 0) {
+            std::cerr << "Handle events error: " << libusb_error_name(ret) << std::endl;
+            break;
+        }
+        // 在处理事件之间加入一些延时，以避免过于频繁地检查事件, ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 
     for (auto & transfer : transfers) {
         libusb_cancel_transfer(transfer);
