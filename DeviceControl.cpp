@@ -174,14 +174,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         int callbackTime = std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count();
         std::string elapsetdTime = subtractAndFormatTime( std::chrono::high_resolution_clock::now(), DeviceControl::transferStartTime);
 
-        std::cout << "transfer_num=" << transfer_num << " "
-        << " frame_no=" << frame_no << " "
-        << " actual_length=" <<  transfer->actual_length << " "
-        << " check=" << check << " "
-        << " transfer=" << transferTime  << " "
-        << " callback=" << callbackTime << " "
-        << " elapsed=" << elapsetdTime
-        << std::endl;
+
         std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
                                  + " frame_no=" + std::to_string(frame_no) + " "
                                  + " actual_length=" + std::to_string(transfer->actual_length) + " "
@@ -190,6 +183,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
                                  + " callback=" + std::to_string(callbackTime) + " "
                                  + " elasped=" + elapsetdTime;
 
+        std::cout << logMessage << std::endl;
         // Save the log message to the file
         DeviceControl::SaveLog(logMessage);
 
