@@ -45,6 +45,7 @@ public:
     static void SaveLog(const std::string& log);
     static std::ofstream logFile;
     static std::ofstream datFile;
+    static bool exitRequested;
     // 数据流部分
     bool isReading = false;
     const static int TRANSFER_NUM = 32;

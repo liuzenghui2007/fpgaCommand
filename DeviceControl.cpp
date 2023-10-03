@@ -6,6 +6,7 @@
 
 std::ofstream DeviceControl::logFile;
 std::ofstream DeviceControl::datFile;
+bool DeviceControl::exitRequested = false;
 std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
 unsigned char** DeviceControl::bufferData = new unsigned char*[DeviceControl::TRANSFER_NUM];
@@ -168,26 +169,35 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         // 从receive处理到完毕是callback时间
         DeviceControl::transferInfoList[transfer_num].callbackDuration = std::chrono::high_resolution_clock ::now() - DeviceControl::transferInfoList[transfer_num].receiveTime;
 
-//
+        int check = frame_no % P1000FrameCount;
+        int transferTime = std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count();
+        int callbackTime = std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count();
+        std::string elapsetdTime = subtractAndFormatTime( std::chrono::high_resolution_clock::now(), DeviceControl::transferStartTime);
+
         std::cout << "transfer_num=" << transfer_num << " "
         << " frame_no=" << frame_no << " "
         << " actual_length=" <<  transfer->actual_length << " "
-        << " check=" << frame_no % P1000FrameCount << " "
-        << " transfer=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count() << " "
-        << " callback=" << std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count() << " "
-        << " elapsed=" << subtractAndFormatTime( std::chrono::high_resolution_clock::now(), DeviceControl::transferStartTime)
+        << " check=" << check << " "
+        << " transfer=" << transferTime  << " "
+        << " callback=" << callbackTime << " "
+        << " elapsed=" << elapsetdTime
         << std::endl;
         std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
                                  + " frame_no=" + std::to_string(frame_no) + " "
                                  + " actual_length=" + std::to_string(transfer->actual_length) + " "
-                                 + " check=" + std::to_string(frame_no % P1000FrameCount) + " "
-                                 + " transfer=" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count()) + " "
-                                 + " callback=" + std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count());
+                                 + " check=" + std::to_string(check) + " "
+                                 + " transfer=" + std::to_string(transferTime) + " "
+                                 + " callback=" + std::to_string(callbackTime) + " "
+                                 + " elasped=" + elapsetdTime;
 
         // Save the log message to the file
         DeviceControl::SaveLog(logMessage);
 
         datFile.write((char*)DeviceControl::bufferData[transfer_num],transfer->actual_length);
+
+        if (check != 0) {
+            exitRequested = true;  // Set the exit flag
+        }
 
         libusb_submit_transfer(transfer);
         DeviceControl::transferInfoList[transfer_num].submitTimeLast = std::chrono::high_resolution_clock::now();
@@ -256,7 +266,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         }
     }
 
-    while (true)
+    while (!exitRequested)
     {
         int ret = libusb_handle_events(nullptr);
         if (ret < 0)
