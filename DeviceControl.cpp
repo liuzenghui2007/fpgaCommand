@@ -19,7 +19,7 @@ DeviceControl::DeviceControl() {
 //    libusb_set_debug(context, 4);
     libusb_set_auto_detach_kernel_driver(NULL, 1);
     // transfer debug info
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < DeviceControl::TRANSFER_NUM; i++) {
         DeviceControl::transferInfoList[i] = {
                 std::chrono::high_resolution_clock::now(),
                 std::chrono::high_resolution_clock::now(),
