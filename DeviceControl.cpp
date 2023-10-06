@@ -17,7 +17,7 @@ DeviceControl::DeviceControl() {
     // libusb init
     libusb_init(&context);
 //    libusb_set_debug(context, 4);
-    libusb_set_auto_detach_kernel_driver(NULL, 1);
+//    libusb_set_auto_detach_kernel_driver(NULL, 1);
     // transfer debug info
     for (int i = 0; i < DeviceControl::TRANSFER_NUM; i++) {
         DeviceControl::transferInfoList[i] = {
@@ -59,7 +59,7 @@ bool DeviceControl::deviceOpen() {
         std::cerr << "Device not found or cannot be opened." << std::endl;
         return false;
     }
-//    libusb_detach_kernel_driver(handle, interface_number);
+    libusb_detach_kernel_driver(handle, interface_number);
     libusb_release_interface(handle, interface_number);
     int ret = libusb_claim_interface(handle, interface_number);
     if (ret != LIBUSB_SUCCESS)
