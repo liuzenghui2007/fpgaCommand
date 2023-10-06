@@ -4,19 +4,19 @@ cmake_minimum_required(VERSION 3.24.0)
 if (WIN32)
     message(STATUS windows system)
     # Qt5 config路径
-    set(CMAKE_PREFIX_PATH  D:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
+#    set(CMAKE_PREFIX_PATH  D:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5)
     # 找x64库
-#        set(VCPKG_TARGET_TRIPLET "x64-windows")
-    #    set(VCPKG_ROOT "$ENV{USERPROFILE}/vcpkg")
+    set(VCPKG_TARGET_TRIPLET "x64-windows")
     set(VCPKG_HOME "$ENV{USERPROFILE}/vcpkg")
     file(TO_CMAKE_PATH "${VCPKG_HOME}" VCPKG_HOME)
     add_definitions(-D_WIN32_WINNT=0x600)
 endif()
 
 # For macOS and Linux (including Ubuntu)
-if (APPLE OR UNIX)
+if (UNIX)
+    set(VCPKG_TARGET_TRIPLET "x64-linux")
     set(VCPKG_HOME "$ENV{HOME}/vcpkg")
-    set(CMAKE_PREFIX_PATH  $ENV{HOME}/Qt/5.15.2/gcc_64/lib/cmake/Qt5)
+#    set(CMAKE_PREFIX_PATH  $ENV{HOME}/Qt/5.15.2/gcc_64/lib/cmake/Qt5)
 endif()
 
 # 首选C++17，没有会使用上一个版本off
@@ -43,7 +43,7 @@ find_package(OpenCV CONFIG REQUIRED)
 #find_package(nlohmann_json CONFIG REQUIRED)
 
 # boost pfr只有头文件
-include_directories(${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include)
+include_directories(${VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/include)
 
 
 #message(STATUS Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS})
