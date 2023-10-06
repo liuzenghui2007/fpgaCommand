@@ -4,6 +4,7 @@
 #include <fstream>
 #include "DeviceControl.h"
 
+
 std::ofstream DeviceControl::logFile;
 std::ofstream DeviceControl::datFile;
 bool DeviceControl::exitRequested = false;
@@ -13,7 +14,11 @@ unsigned char** DeviceControl::bufferData = new unsigned char*[DeviceControl::TR
 TransferInfo DeviceControl::transferInfoList[DeviceControl::TRANSFER_NUM];
 
 DeviceControl::DeviceControl() {
+    // libusb init
     libusb_init(&context);
+//    libusb_set_debug(context, 4);
+    libusb_set_auto_detach_kernel_driver(NULL, 1);
+    // transfer debug info
     for (int i = 0; i < 4; i++) {
         DeviceControl::transferInfoList[i] = {
                 std::chrono::high_resolution_clock::now(),
@@ -23,7 +28,7 @@ DeviceControl::DeviceControl() {
                 std::chrono::steady_clock::duration()
         };
     }
-    // Generate a filename with a timestamp
+    // log file
     std::ostringstream logFileName;
     std::ostringstream datFileName;
     auto now = std::chrono::system_clock::now();
@@ -32,7 +37,6 @@ DeviceControl::DeviceControl() {
     datFileName << "log_" << std::put_time(std::localtime(&timePoint), "%Y-%m-%d_%H-%M-%S") << ".dat";
     // Open the log file with the generated filename
     logFile.open(logFileName.str());
-
     datFile.open(datFileName.str(),std::ofstream::binary);
 }
 
@@ -55,6 +59,7 @@ bool DeviceControl::deviceOpen() {
         std::cerr << "Device not found or cannot be opened." << std::endl;
         return false;
     }
+//    libusb_detach_kernel_driver(handle, interface_number);
     libusb_release_interface(handle, interface_number);
     int ret = libusb_claim_interface(handle, interface_number);
     if (ret != LIBUSB_SUCCESS)
