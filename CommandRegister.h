@@ -2,7 +2,7 @@
 #define COMMANDREGISTER_H
 
 #include <iostream>
-#include <boost/pfr.hpp>
+//#include <boost/pfr.hpp>
 #include <cstdint>
 #include "Types.h"
 
@@ -309,13 +309,13 @@ FC_VCOM_CURRENT _fcVcomCurrent;
 template<typename T>
 void printMembers(const T& data) {
     // 使用boost::pfr获取结构体的成员数量
-    constexpr auto memberCount = boost::pfr::tuple_size<T>::value;
+//    constexpr auto memberCount = boost::pfr::tuple_size<T>::value;
 
-    // 遍历并打印每个成员的值
-    for (size_t i = 0; i < memberCount; ++i) {
-        const auto& member = boost::pfr::get<T>(data, i);
-        std::cout << "Member " << i << ": " << member << std::endl;
-    }
+//    // 遍历并打印每个成员的值
+//    for (size_t i = 0; i < memberCount; ++i) {
+//        const auto& member = boost::pfr::get<T>(data, i);
+//        std::cout << "Member " << i << ": " << member << std::endl;
+//    }
 }
 
 

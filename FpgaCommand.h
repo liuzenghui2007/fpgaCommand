@@ -8,7 +8,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include <winsock2.h>
+//#include <winsock2.h>
 
 //htonl（host to network long）：将 32 位主机字节顺序的整数转换为网络字节顺序的整数。
 //htons（host to network short）：将 16 位主机字节顺序的短整数转换为网络字节顺序的短整数。
