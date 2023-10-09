@@ -73,7 +73,7 @@ bool DeviceControl::deviceOpen() {
 
     bufferDataAll = reinterpret_cast<unsigned char *>(libusb_dev_mem_alloc(handle, total_buffer_size));
     if (NULL == bufferDataAll) {
-        std::cout << "buffer error" << std::endl;
+        std::cout << "buffer error: "  << std::endl;
     }
 
 //    bufferData = new unsigned char*[TRANSFER_NUM];
