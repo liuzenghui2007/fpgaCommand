@@ -10,6 +10,7 @@ std::ofstream DeviceControl::datFile;
 bool DeviceControl::exitRequested = false;
 std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
+//unsigned char *DeviceControl::bufferDataAll = reinterpret_cast<unsigned char *>(libusb_dev_mem_alloc(dev_handle, total_buffer_size));
 unsigned char** DeviceControl::bufferData = new unsigned char*[DeviceControl::TRANSFER_NUM];
 TransferInfo DeviceControl::transferInfoList[DeviceControl::TRANSFER_NUM];
 
@@ -70,6 +71,12 @@ bool DeviceControl::deviceOpen() {
         return false;
     }
 
+    bufferDataAll = reinterpret_cast<unsigned char *>(libusb_dev_mem_alloc(handle, total_buffer_size));
+    if (NULL == bufferDataAll) {
+        std::cout << "buffer error" << std::endl;
+    }
+
+//    bufferData = new unsigned char*[TRANSFER_NUM];
     return true;
 }
 

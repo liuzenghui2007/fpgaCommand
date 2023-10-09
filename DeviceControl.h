@@ -52,7 +52,7 @@ public:
     const static int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 总buffer和分buffer指向同一片地址区域
-    unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
+    unsigned char *bufferDataAll;
     static unsigned char** bufferData;
     // 必须在类外初始化
     static std::chrono::high_resolution_clock::time_point transferStartTime;
