@@ -35,8 +35,7 @@ public:
     static void ReadDataOnce(DeviceControl* deviceControl);
     // 数据流部分
     // 新增的常量成员
-    static const uint16_t P1000FrameSize = 2080;
-    static const uint16_t P1000FrameCount = 1024;
+
 //    static const uint16_t P2560FrameSize = 1312;
 //    static const uint16_t P2560FrameCount = 8;
     static std::atomic<std::size_t> totalTransferredData;
@@ -49,6 +48,8 @@ public:
     // 数据流部分
     bool isReading = false;
     const static int TRANSFER_NUM = 32;
+    static const uint16_t P1000FrameSize = 1312;
+    static const uint16_t P1000FrameCount = 1024;
     const static int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 总buffer和分buffer指向同一片地址区域
@@ -62,8 +63,8 @@ private:
     // 硬件描述
     const int interface_number = 0;
     const int vid = 0x0ff8;
-    const int pid = 0x00ff;
-    // const int pid = 0x20fc;
+//    const int pid = 0x00ff;
+    const int pid = 0x20fc;
     unsigned char endpoint_out = 0x01;
     unsigned char endpoint_in = 0x81;
     unsigned char endpoint_data = 0x82;
