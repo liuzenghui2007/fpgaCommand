@@ -165,12 +165,6 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
             std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE << std::endl;
             return;
         }
-        if(frame_no - DeviceControl::totalTransferredData == P1000FrameCount){
-            DeviceControl::totalTransferredData = frame_no;
-        }else{
-            std::cout <<std::dec<< frame_no <<"error"<<DeviceControl::totalTransferredData<<std::endl;
-            DeviceControl::totalTransferredData = frame_no;
-        }
         // 从receive处理到完毕是callback时间
         DeviceControl::transferInfoList[transfer_num].callbackDuration = std::chrono::high_resolution_clock ::now() - DeviceControl::transferInfoList[transfer_num].receiveTime;
 
