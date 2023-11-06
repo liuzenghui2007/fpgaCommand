@@ -40,7 +40,9 @@ find_package(libusb CONFIG REQUIRED)
 
 find_package(OpenCV CONFIG REQUIRED)
 
-#find_package(nlohmann_json CONFIG REQUIRED)
+find_package(NumCpp CONFIG REQUIRED)
+
+find_package(Eigen3 CONFIG REQUIRED)
 
 # boost pfr只有头文件
 include_directories(${VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/include)
@@ -69,6 +71,8 @@ target_link_libraries(control ${LIBUSB_LIBRARIES})
 # 链接opencv
 target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
 
-#target_link_libraries(control nlohmann_json::nlohmann_json)
+target_link_libraries(control NumCpp::NumCpp)
+
+target_link_libraries(control Eigen3::Eigen)
 
 
