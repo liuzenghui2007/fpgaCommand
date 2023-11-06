@@ -6,6 +6,7 @@
 #include "FpgaCommand.h"
 #include "DeviceControl.h"
 
+#include "testEigen.h"
 
 
 int main() {
@@ -14,7 +15,8 @@ int main() {
     // 12 是返回内容的起始字节
     // 12 20个字-4内容-4尾部
 
-
+//    testEigen();
+//    return 0;
     DeviceControl devCtrl;
     devCtrl.deviceOpen();
 
