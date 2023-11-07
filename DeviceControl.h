@@ -9,6 +9,7 @@
 #include <cstdlib> // For system()
 #include <fstream>
 #include <opencv2/opencv.hpp>
+#include <Eigen/Dense>
 
 
 struct TransferInfo

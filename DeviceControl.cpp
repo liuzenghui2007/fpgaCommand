@@ -183,7 +183,26 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
                                  + " elasped=" + elapsetdTime;
 
         std::cout << logMessage << std::endl;
-        // Save the log message to the file
+        // begin data process
+//        uint8_t* buffer = transfer->buffer;  // 假设 transfer->buffer 包含要复制的数据
+//        int numRows = 1024;
+//        int numCols = 1312;
+//        // 创建一个Eigen::Matrix对象来保存转换后的数据
+//        Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic> eigenMatrix(numRows, numCols);
+//        // 打印eigenMatrix的大小
+//        std::cout << "Rows 0: " << eigenMatrix.rows() << std::endl;
+//        std::cout << "Cols 0: " << eigenMatrix.cols() << std::endl;
+//        // 使用memcpy将数据从缓冲区复制到Eigen::Matrix对象中
+//        std::memcpy(eigenMatrix.data(), buffer, numRows * numCols);
+//        // 打印eigenMatrix的第一行数据的前16个字节
+//        for (int i = 0; i < 16; i++) {
+//            std::cout << static_cast<int>(eigenMatrix(i, 0)) << " ";
+//        }
+//        std::cout << std::endl;
+//        // 打印eigenMatrix的大小
+//        std::cout << "Rows: " << eigenMatrix.rows() << std::endl;
+//        std::cout << "Cols: " << eigenMatrix.cols() << std::endl;
+//        // Save the log message to the file
         DeviceControl::SaveLog(logMessage);
 
         datFile.write((char*)DeviceControl::bufferData[transfer_num],transfer->actual_length);
