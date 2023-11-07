@@ -43,6 +43,7 @@ public:
     static void TransferCallback(struct libusb_transfer* transfer);
     static void ReadDataAsync(DeviceControl* deviceControl);
     static void SaveLog(const std::string& log);
+    static void ProcessData(uint8_t* buffer, std::size_t length);
     static std::ofstream logFile;
     static std::ofstream datFile;
     static bool exitRequested;
