@@ -12,7 +12,7 @@ std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime 
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
 unsigned char** DeviceControl::bufferData = new unsigned char*[DeviceControl::TRANSFER_NUM];
 TransferInfo DeviceControl::transferInfoList[DeviceControl::TRANSFER_NUM];
-
+float* DeviceControl::dataFloatAll = new float[DeviceControl::total_data_size];
 DeviceControl::DeviceControl() {
     // libusb init
     libusb_init(&context);
@@ -147,53 +147,77 @@ std::string subtractAndFormatTime(
     return formatted_time.str();
 }
 
+//void DeviceControl::ProcessData(uint8_t* buffer, std::size_t length) {
+//    // begin data process
+//    int numRows = 1024;
+//    int numCols = 1312;
+//    // 创建一个Eigen::Matrix对象来保存转换后的数据
+//    Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic> eigenMatrix(1312, 1024);
+//    // 使用memcpy将数据从缓冲区复制到Eigen::Matrix对象中
+//    std::memcpy(eigenMatrix.data(), buffer, 1312 * 1024);
+//    eigenMatrix.transposeInPlace();
+//    // 打印eigenMatrix的大小
+//    std::cout << std::dec << "Rows: " << eigenMatrix.rows() << std::endl;
+//    std::cout << std::dec << "Cols: " << eigenMatrix.cols() << std::endl;
+//    // 打印eigenMatrix的第一行数据的前16个字节
+//    for (int i = 0; i < 16; i++) {
+//        std::cout << std::hex << static_cast<int>(eigenMatrix(0, i)) << " ";
+//    }
+//    std::cout << std::endl;
+//    // 使用Eigen块操作交换基数列和偶数列
+//    for (int i = 0; i < numCols; i += 2) {
+//        eigenMatrix.block(0, i, numRows, 2).rowwise().reverseInPlace();
+//    }
+//    // 输出交换后的Eigen::Matrix
+//    std::cout << "交换后的矩阵：" << std::endl;
+//    // 打印eigenMatrix的第一行数据的前16个字节
+//    for (int i = 0; i < 16; i++) {
+//        std::cout << std::hex << static_cast<int>(eigenMatrix(0, i)) << " ";
+//    }
+//    std::cout << std::endl;
+//
+//    // 使用Eigen块操作来选择奇数列和偶数列
+//    // 创建一个新的Eigen::Matrix对象来存储合并后的数据
+//    Eigen::Matrix<uint16_t, Eigen::Dynamic, Eigen::Dynamic> mergedMatrix(numRows, numCols / 2);
+//
+//    // 合并奇数列和偶数列，并处理字节顺序
+//    for (int row = 0; row < numRows; ++row) {
+//        for (int col = 0; col < numCols / 2; ++col) {
+//            uint16_t oddValue = eigenMatrix(row, 2 * col);
+//            uint16_t evenValue = eigenMatrix(row, 2 * col + 1);
+//            uint16_t mergedValue = (evenValue << 8) | oddValue;
+//            mergedMatrix(row, col) = mergedValue;
+//        }
+//    }
+//
+//    // 输出合并后的Eigen::Matrix
+//    std::cout << "合并后的矩阵：" << std::endl;
+//    for (int i = 0; i < 16; i++) {
+//        std::cout << std::hex << static_cast<uint16_t>(mergedMatrix(0, i)) << " ";
+//    }
+//    std::cout << std::endl;
+//
+//    // end data process
+//}
 void DeviceControl::ProcessData(uint8_t* buffer, std::size_t length) {
     // begin data process
+    for (int j = 0; j < 32; j++) {
+        std::cout << static_cast<unsigned int>(buffer[j])  << " ";
+    }
+    std::cout << std::endl;
     int numRows = 1024;
     int numCols = 1312;
-    // 创建一个Eigen::Matrix对象来保存转换后的数据
-    Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic> eigenMatrix(1312, 1024);
-    // 使用memcpy将数据从缓冲区复制到Eigen::Matrix对象中
-    std::memcpy(eigenMatrix.data(), buffer, 1312 * 1024);
-    eigenMatrix.transposeInPlace();
-    // 打印eigenMatrix的大小
-    std::cout << std::dec << "Rows: " << eigenMatrix.rows() << std::endl;
-    std::cout << std::dec << "Cols: " << eigenMatrix.cols() << std::endl;
-    // 打印eigenMatrix的第一行数据的前16个字节
-    for (int i = 0; i < 16; i++) {
-        std::cout << std::hex << static_cast<int>(eigenMatrix(0, i)) << " ";
+   // dataFloatAll是一个指向 float 数组的指针，因此你可以直接访问和赋值数组的元素，就像访问普通数组一样，不需要额外的指针操作符。
+    for (int i = 0; i < 1024; i++) {
+        for (int j = 0; j < 640; j++) {
+            dataFloatAll[i * 640 + j] = buffer[i * 1312 + j * 2 + 16] * 256 + buffer[i * 1312 + j * 2 + 17] ;
+        }
+    }
+    for (int j = 0; j < 12; j++) {
+        std::cout << dataFloatAll[j] << " ";
     }
     std::cout << std::endl;
-    // 使用Eigen块操作交换基数列和偶数列
-    for (int i = 0; i < numCols; i += 2) {
-        eigenMatrix.block(0, i, numRows, 2).rowwise().reverseInPlace();
-    }
-    // 输出交换后的Eigen::Matrix
-    std::cout << "交换后的矩阵：" << std::endl;
-    // 打印eigenMatrix的第一行数据的前16个字节
-    for (int i = 0; i < 16; i++) {
-        std::cout << std::hex << static_cast<int>(eigenMatrix(0, i)) << " ";
-    }
-    std::cout << std::endl;
-
-    // 使用Eigen块操作来选择奇数列和偶数列
-    Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic> oddColumns = eigenMatrix.block(0, 0, numRows, numCols / 2);
-    Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic> evenColumns = eigenMatrix.block(0, numCols / 2, numRows, numCols / 2);
-
-    // 将奇数列和偶数列合并，并将数据类型转换为uint16_t
-    Eigen::Matrix<uint16_t, Eigen::Dynamic, Eigen::Dynamic> mergedMatrix(numRows, numCols / 2);
-    mergedMatrix = oddColumns.cast<uint16_t>() * 256 + evenColumns.cast<uint16_t>();
-
-    // 输出合并后的Eigen::Matrix
-    std::cout << "合并后的矩阵：" << std::endl;
-    for (int i = 0; i < 16; i++) {
-        std::cout << std::hex << static_cast<uint16_t>(mergedMatrix(0, i)) << " ";
-    }
-    std::cout << std::endl;
-
-    // end data process
 }
-
 void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {

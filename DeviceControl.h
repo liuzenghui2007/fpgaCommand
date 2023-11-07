@@ -54,6 +54,11 @@ public:
     static const uint16_t P1000FrameCount = 1024;
     const static int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
+    // 转后数据
+    static const uint16_t P1000ChannelSize = 640;
+    static const size_t total_data_size = P1000FrameCount * P1000ChannelSize ;
+    static float *dataFloatAll;
+
     // 总buffer和分buffer指向同一片地址区域
     unsigned char *bufferDataAll = new unsigned char[total_buffer_size];
     static unsigned char** bufferData;
