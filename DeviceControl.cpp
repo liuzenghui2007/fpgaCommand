@@ -207,10 +207,12 @@ void DeviceControl::ProcessData(uint8_t* buffer, std::size_t length) {
     std::cout << std::endl;
     int numRows = 1024;
     int numCols = 1312;
+    int newj = 0;
    // dataFloatAll是一个指向 float 数组的指针，因此你可以直接访问和赋值数组的元素，就像访问普通数组一样，不需要额外的指针操作符。
     for (int i = 0; i < 1024; i++) {
         for (int j = 0; j < 640; j++) {
-            dataFloatAll[i * 640 + j] = buffer[i * 1312 + j * 2 + 16] * 256 + buffer[i * 1312 + j * 2 + 17] ;
+            newj = (j + 40) % 640; // 首次先去最后40，其余向后偏移40
+            dataFloatAll[i * 640 + j] = buffer[i * 1312 + newj * 2 + 16] * 256 + buffer[i * 1312 + newj * 2 + 17] ;
         }
     }
     for (int j = 0; j < 12; j++) {
