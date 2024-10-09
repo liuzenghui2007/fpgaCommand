@@ -28,7 +28,7 @@ DeviceControl::DeviceControl() {
                 std::chrono::steady_clock::duration()
         };
     }
-    // log file
+    // log fileaa
     std::ostringstream logFileName;
     std::ostringstream datFileName;
     auto now = std::chrono::system_clock::now();

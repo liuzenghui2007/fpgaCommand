@@ -69,9 +69,8 @@ public:
 private:
     // 硬件描述
     const int interface_number = 0;
-    const int vid = 0x0ff8;
-//    const int pid = 0x00ff;
-    const int pid = 0x20fc;
+    const int vid = 0x3701;
+    const int pid = 0x0a00;
     unsigned char endpoint_out = 0x01;
     unsigned char endpoint_in = 0x81;
     unsigned char endpoint_data = 0x82;

@@ -41,6 +41,7 @@ int main() {
     resContent.showBin();
     std::cout << "asicAt=" << asicDet << std::endl;
     std::cout << "asicReady=" << asicReady << std::endl;
+    std::cout << "begin" << '\n';
 
     // asic power
     cmdContent.reset(0);
@@ -52,6 +53,7 @@ int main() {
 
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
+    std::cout << "asic power finished" << '\n';
 
     // asic vcm
     cmdContent.reset(0);
@@ -62,6 +64,7 @@ int main() {
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
+    std::cout << "asic vcm finished" << '\n';
 
 
     // asic vcom
