@@ -36,7 +36,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 #
 #find_package(Qt5  REQUIRED COMPONENTS Core Network)
 
-find_package(libusb CONFIG REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(libusb REQUIRED IMPORTED_TARGET libusb-1.0)
+
 
 find_package(OpenCV CONFIG REQUIRED)
 
@@ -45,11 +47,8 @@ find_package(NumCpp CONFIG REQUIRED)
 find_package(Eigen3 CONFIG REQUIRED)
 
 # boost pfr只有头文件
-include_directories(${VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/include)
+#include_directories(${VCPKG_HOME}/installed/${VCPKG_TARGET_TRIPLET}/include)
 
-
-#message(STATUS Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS})
-#include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(control main.cpp
     CommandContent.h CommandContent.cpp
@@ -64,15 +63,13 @@ add_executable(control main.cpp
 #target_link_libraries(control
 #        Qt5::Core
 #)
-# 包含libusb头文件
-target_include_directories(control PRIVATE ${LIBUSB_INCLUDE_DIRS})
-# 链接libusb
-target_link_libraries(control ${LIBUSB_LIBRARIES})
+target_link_libraries(control PRIVATE PkgConfig::libusb)
+
 # 链接opencv
-target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
+target_link_libraries(control PRIVATE opencv_ml opencv_dnn opencv_core opencv_flann)
 
-target_link_libraries(control NumCpp::NumCpp)
+target_link_libraries(control PRIVATE NumCpp::NumCpp)
 
-target_link_libraries(control Eigen3::Eigen)
+target_link_libraries(control PRIVATE Eigen3::Eigen)
 
 
