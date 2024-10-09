@@ -140,6 +140,7 @@ void CommandContent::showBin() const {
     for (const uint32_t& value : data) {
         std::cout << std::bitset<32>(value).to_string().insert(24, " ").insert(16, " ").insert(8, " ") << '\n';
     }
+    std::cout << "-----------------------------------" << '\n';
 }
 
 // 返回成员变量 data

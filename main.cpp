@@ -44,6 +44,7 @@ int main() {
     std::cout << "begin" << '\n';
 
     // asic power
+    std::cout << "asic power"  << std::endl;
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_POWER_32BIT, cmdContent.getData());
@@ -53,9 +54,9 @@ int main() {
 
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
-    std::cout << "asic power finished" << '\n';
 
     // asic vcm
+    std::cout << "asic vcm"  << std::endl;
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_VCM_EN_32BIT, cmdContent.getData());
@@ -64,10 +65,11 @@ int main() {
     bufferPtr = devCtrl.getBuffer();
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
-    std::cout << "asic vcm finished" << '\n';
+
 
 
     // asic vcom
+    std::cout << "asic vcom"  << std::endl;
     cmdContent.reset(0);
     cmdContent.setBitValue(0, 1);
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_FC_VCOM_EN_32BIT, cmdContent.getData());
@@ -81,6 +83,7 @@ int main() {
 
     // asic init
     // set sampling rate, uint is ns 1s=10^9ns
+    std::cout << "asic init"  << std::endl;
     uint32_t samplingRate = 30000;
     uint32_t samplingPeriod = 1000000000/(samplingRate * 12.5);
     cmdContent.reset(samplingPeriod);
@@ -91,7 +94,9 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
+
     // set temperature to 38℃
+    std::cout << "asic set temp"  << std::endl;
     uint8_t t = 38;
     uint32_t temperature = 65536 * (exp((1.0/(t+273.15)-1.0/298.15)*3380)+1)/(2+exp((1.0/(t+273.15)-1.0/298.15)*3380));
     cmdContent.reset(0);
@@ -103,7 +108,9 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
+
     // set work mode, 8*32bit, 8bits / channel, P1000
+    std::cout << "asic set work mode"  << std::endl;
     int totalChannels = 32;
     int contentLength = 8; // *32bit
     int channelLength = 8;  // bit
@@ -119,8 +126,8 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
-
     // set gain 使用asic_ctrl
+    std::cout << "asic set gain"  << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1, 0));
     cmdContent.setBitsRange(3, 2, 0b00); // 设置 3、4 bit 为00， 对应-1/3 mV/pA;
     cmdContent.setBitsRange(16 + 3, 2, 0b11); // 设置19、20bit 为11， 对应3、4bit生效；
@@ -133,6 +140,7 @@ int main() {
 
 
     // disable unblock 使用asic_ctrl,  value+mask都要设置
+    std::cout << "asic disable unblock"  << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitValue(0, 0);   // 设置0 bit为0，禁止疏通
     cmdContent.setBitValue(16 + 0, 1); // 设置对应掩码bit为1
@@ -143,7 +151,9 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
+
     // set protocol voltage fixed value 设定测序电压-恒定
+    std::cout << "asic set constant v"  << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_OUTPUT_FIXED_32BIT, cmdContent.getData());
     devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
@@ -153,6 +163,7 @@ int main() {
     resContent.showBin();
 
     // toggle protocol voltage mode fixed value 选定测序电压-恒定
+    std::cout << "asic apply constant v"  << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(0, 1, 0b11); // 单次模式
     cmd.fillCommand(1, RegisterEnum::WRITE_FC_VCOM_MODE_32BIT, cmdContent.getData());
@@ -162,10 +173,8 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
-
-
-
     // adc enable
+    std::cout << "adc enable"  << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(0, 1, 0b1); // adc 采样使能
     cmd.fillCommand(1, RegisterEnum::WRITE_ADC_ENABLE_32BIT, cmdContent.getData());
@@ -176,6 +185,7 @@ int main() {
     resContent.showBin();
 
     // adc ctrl ep使能
+    std::cout << "adc ep=1" << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(5, 1, 0b1); // ep使能
     cmd.fillCommand(1, RegisterEnum::WRITE_ASIC_CONTROL_32BIT, cmdContent.getData());
@@ -186,6 +196,7 @@ int main() {
     resContent.showBin();
 
     // adc disable
+    std::cout << "adc disable" << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(0, 1, 0b0); // adc 采样使能
     cmd.fillCommand(1, RegisterEnum::WRITE_ADC_ENABLE_32BIT, cmdContent.getData());
@@ -195,11 +206,13 @@ int main() {
     resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
     resContent.showBin();
 
-    devCtrl.StartRead();
+
+//    devCtrl.StartRead();
 
 //    devCtrl.StartReadThread();
 
     // 查询状态-读取
+    std::cout << "开始读取数据流*******************" << std::endl;
     std::cout << "读取状态, 清除溢出标志" << std::endl;
     // 构造 发送 接收 解析 输出
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
@@ -217,6 +230,7 @@ int main() {
     std::thread readerThread(&DeviceControl::ReadDataAsync, &devCtrl);
 
     // adc enable
+    std::cout << "adc enable"  << std::endl;
     cmdContent.fillContent(std::vector<uint32_t>(1,0));
     cmdContent.setBitsRange(0, 1, 0b1); // adc 采样使能
     cmd.fillCommand(1, RegisterEnum::WRITE_ADC_ENABLE_32BIT, cmdContent.getData());
