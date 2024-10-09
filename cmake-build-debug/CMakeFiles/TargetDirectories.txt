@@ -1,0 +1,3 @@
+/home/zenghui/polyseq/test_cpp/testLibusb/cmake-build-debug/CMakeFiles/control.dir
+/home/zenghui/polyseq/test_cpp/testLibusb/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/zenghui/polyseq/test_cpp/testLibusb/cmake-build-debug/CMakeFiles/rebuild_cache.dir

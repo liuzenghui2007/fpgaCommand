@@ -42,7 +42,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 #
 #find_package(Qt5  REQUIRED COMPONENTS Core Network)
 
-find_package(libusb CONFIG REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(libusb REQUIRED IMPORTED_TARGET libusb-1.0)
+
 
 find_package(OpenCV CONFIG REQUIRED)
 
@@ -68,12 +70,15 @@ add_executable(control main.cpp
 #target_link_libraries(control
 #        Qt5::Core
 #)
-# 包含libusb头文件
-target_include_directories(control PRIVATE ${LIBUSB_INCLUDE_DIRS})
-# 链接libusb
-target_link_libraries(control ${LIBUSB_LIBRARIES})
+## 包含libusb头文件
+#target_include_directories(control PRIVATE ${LIBUSB_INCLUDE_DIRS})
+## 链接libusb
+#target_link_libraries(control ${LIBUSB_LIBRARIES})
+target_link_libraries(control PRIVATE PkgConfig::libusb)
+
 # 链接opencv
-target_link_libraries(control opencv_ml opencv_dnn opencv_core opencv_flann)
+target_link_libraries(control PRIVATE opencv_ml opencv_dnn opencv_core opencv_flann)
+
 
 #target_link_libraries(control nlohmann_json::nlohmann_json)
 
