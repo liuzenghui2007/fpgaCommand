@@ -20,13 +20,14 @@ enum RegisterEnum : uint32_t
     READ_ADC_ACQ_TIME_32BIT = 0x80000005,          // 读：ADC ACQ time 状态寄存器
 
     // ASIC CONTROL registers
-    WRITE_ASIC_CONTROL_32BIT = 0x01000001,             // 写：ASIC控制寄存器, 设置 EP 增益
+//    WRITE_ASIC_CONTROL_32BIT = 0x01000001,             // 写：ASIC控制寄存器, 设置 EP 增益
     WRITE_ASIC_POWER_32BIT = 0x01000002,               // 写：ASIC POWER 控制寄存器
     WRITE_ASIC_VCM_EN_32BIT = 0x01000003,              // 写：ASIC VCM_EN 控制寄存器
     WRITE_ASIC_FC_VCOM_EN_32BIT = 0x01000004,          // 写：ASIC FC_VCOM_EN 控制寄存器
     WRITE_ASIC_CHANNEL_STATE_32X32BIT = 0x01000005,     // 写：ASIC 1024个通道开关状态配置寄存器
     WRITE_ASIC_CHANNEL_STATE_SINGLE_32BIT = 0x01000006, // 写：ASIC 单个通道开关状态配置寄存器
     WRITE_ASIC_CHANNEL_UNBLOCK_32BIT = 0x01000007,      // 写：ASIC unblock通道号配置寄存器
+    WRITE_ASIC_CONTROL_32BIT = 0x01000008,             // 写：ASIC控制寄存器, **
     READ_ASIC_STATUS_32BIT = 0x81000001,                    // 读：ASIC状态寄存器
 
     // ASIC cooling control registers
