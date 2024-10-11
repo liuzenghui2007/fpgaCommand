@@ -288,8 +288,11 @@ void DeviceControl::ReadDataOnce(DeviceControl* deviceControl) {
         auto currentTime = std::chrono::steady_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
 
-        if (elapsedTime >= 500)
+        if (elapsedTime >= 500) {
+            std::cout << "超时\n";
             break;
+        }
+
 
         int transferResult = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferDataAll, deviceControl->TRANSFER_SIZE, &(deviceControl->transferred_data), 10);
         if (transferResult == 0 && deviceControl->transferred_data != 0)
@@ -362,7 +365,7 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
 }
 
 void DeviceControl::StartRead() {
-
+//   读完缓冲区缓存
     this->ReadDataOnce(this);
 
 }

@@ -166,16 +166,17 @@ int main() {
     resContent.showBin();
 
 //    // adc enable
-//    std::cout << "adc enable"  << std::endl;
-//    cmdContent.fillContent(std::vector<uint32_t>(1,0));
-//    cmdContent.setBitsRange(0, 1, 0b1); // adc 采样使能
-//    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_ENABLE_32BIT, cmdContent.getData());
-//    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
-//    transferred = devCtrl.receiveData();
-//    bufferPtr = devCtrl.getBuffer();
-//    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
-//    resContent.showBin();
+    std::cout << "adc enable"  << std::endl;
+    cmdContent.fillContent(std::vector<uint32_t>(1,0));
+    cmdContent.setBitsRange(0, 1, 0b1); // adc 采样使能
+    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_ENABLE_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
+    resContent.showBin();
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // adc disable
     std::cout << "adc disable" << std::endl;
@@ -189,7 +190,9 @@ int main() {
     resContent.showBin();
 
 
-//    devCtrl.StartRead();
+    devCtrl.StartRead();
+    return 0;
+
 
 //    devCtrl.StartReadThread();
 
