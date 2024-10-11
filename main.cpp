@@ -191,10 +191,6 @@ int main() {
 
 
     devCtrl.StartRead();
-//    return 0;
-
-
-//    devCtrl.StartReadThread();
 
     // 查询状态-读取
     std::cout << "开始读取数据流*******************" << std::endl;

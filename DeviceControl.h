@@ -50,13 +50,13 @@ public:
     // 数据流部分
     bool isReading = false;
     const static int TRANSFER_NUM = 32;
-    static const uint16_t P1000FrameSize = 1312;
-    static const uint16_t P1000FrameCount = 1024;
-    const static int TRANSFER_SIZE = P1000FrameCount * P1000FrameSize;
+    static const uint16_t FrameSize = 1312;
+    static const uint16_t FrameCount = 1024;
+    const static int TRANSFER_SIZE = FrameCount * FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 转后数据
-    static const uint16_t P1000ChannelSize = 640;
-    static const size_t total_data_size = P1000FrameCount * P1000ChannelSize ;
+    static const uint16_t ChannelSize = 640;
+    static const size_t total_data_size = FrameCount * ChannelSize ;
     static float *dataFloatAll;
 
     // 总buffer和分buffer指向同一片地址区域
@@ -78,15 +78,15 @@ private:
     libusb_device_handle* handle = nullptr ; // nullptr
     libusb_context* context = nullptr;      // nullptr
 
-    // 控制部分
+    // 控制部分，n有 1 2 4 40 129，其中4只有读用到，40和129只有写用到
     // 16 + n * 4, n是返回内容需要的uint32的数量
     // n=1, 20个字节 = 12 + 1 * 4 + 2 + 2， 中间1个uint32_t, 也就是13-16字节是返回内容， 17-18字节是出错信息
-    // n=8, 48个字节 = 12 + 8 * 4 + 2 + 2， 中间8个uint32_t, 也就是13-48字节是返回内容， 49-50字节是出错信息
-    // n=32, 144个字节 = 12 + 32 * 4 + 2 + 2， 中间32个uint32_t, 也就是13-140字节是返回内容， 141-142字节是出错信息
-    // n=129, 只有写模式油
-    // 接收数据 的缓冲区、最大数量、实际传输字节
-    unsigned char buffer[144];
-    int length = 144;
+    // n=4, 32个字节 = 12 + 4 * 4 + 2 + 2， 中间8个uint32_t, 也就是13-28字节是返回内容， 29-30字节是出错信息
+    // n=40, 176个字节 = 12 + 40 * 4 + 2 + 2， 中间40个uint32_t, 写模式用
+    // n=129, 只有写模式
+    // 接收数据 的缓冲区、最大数量、实际传输字节，只用32个字节就可以。读取返回最大长度是这个
+    int length = 32;
+    unsigned char buffer[32];
     int transferred = 0;   // 实际接收数据长度
 
     int transferred_data = 0;  // 实际接收数据长度

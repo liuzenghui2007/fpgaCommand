@@ -98,6 +98,8 @@ bool DeviceControl::sendCmd(const uint8_t* command, int commandLength) {
     return true;
 }
 
+//unsigned char buffer[32];
+// 读取下位机的命令返回,内容保存到buffer[32]
 int DeviceControl::receiveData() {
     if (!handle) {
         std::cerr << "Device not opened." << std::endl;
@@ -201,10 +203,10 @@ std::string subtractAndFormatTime(
 //}
 void DeviceControl::ProcessData(uint8_t* buffer, std::size_t length) {
     // begin data process
-    for (int j = 0; j < 32; j++) {
-        std::cout << static_cast<unsigned int>(buffer[j])  << " ";
-    }
-    std::cout << std::endl;
+//    for (int j = 0; j < 32; j++) {
+//        std::cout << static_cast<unsigned int>(buffer[j])  << " ";
+//    }
+//    std::cout << std::endl;
     int numRows = 1024;
     int numCols = 1312;
     int newj = 0;
@@ -240,7 +242,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         // 从receive处理到完毕是callback时间
         DeviceControl::transferInfoList[transfer_num].callbackDuration = std::chrono::high_resolution_clock ::now() - DeviceControl::transferInfoList[transfer_num].receiveTime;
 
-        int check = frame_no % P1000FrameCount;
+        int check = frame_no % FrameCount;
         int transferTime = std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count();
         int callbackTime = std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count();
         std::string elapsetdTime = subtractAndFormatTime( std::chrono::high_resolution_clock::now(), DeviceControl::transferStartTime);
@@ -249,10 +251,10 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
                                  + " frame_no=" + std::to_string(frame_no) + " "
                                  + " actual_length=" + std::to_string(transfer->actual_length) + " "
-                                 + " check=" + std::to_string(check) + " "
-                                 + " transfer=" + std::to_string(transferTime) + " "
-                                 + " callback=" + std::to_string(callbackTime) + " "
-                                 + " elasped=" + elapsetdTime;
+                                 + " frame_no check=" + std::to_string(check) + " "
+                                 + " transferTime=" + std::to_string(transferTime) + " "
+                                 + " callbackTime=" + std::to_string(callbackTime) + " "
+                                 + " elaspedTime=" + elapsetdTime;
 
         std::cout << logMessage << std::endl;
 
