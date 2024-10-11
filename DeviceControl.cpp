@@ -4,29 +4,29 @@
 #include <fstream>
 #include "DeviceControl.h"
 
-
 std::ofstream DeviceControl::logFile;
 std::ofstream DeviceControl::datFile;
 bool DeviceControl::exitRequested = false;
 std::chrono::high_resolution_clock::time_point DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
 std::atomic<std::size_t> DeviceControl::totalTransferredData = 0;
-unsigned char** DeviceControl::bufferData = new unsigned char*[DeviceControl::TRANSFER_NUM];
+unsigned char **DeviceControl::bufferData = new unsigned char *[DeviceControl::TRANSFER_NUM];
 TransferInfo DeviceControl::transferInfoList[DeviceControl::TRANSFER_NUM];
-float* DeviceControl::dataFloatAll = new float[DeviceControl::total_data_size];
-DeviceControl::DeviceControl() {
+float *DeviceControl::dataFloatAll = new float[DeviceControl::total_data_size];
+DeviceControl::DeviceControl()
+{
     // libusb init
     libusb_init(&context);
-//    libusb_set_debug(context, 4);
-//    libusb_set_auto_detach_kernel_driver(NULL, 1);
+    //    libusb_set_debug(context, 4);
+    //    libusb_set_auto_detach_kernel_driver(NULL, 1);
     // transfer debug info
-    for (int i = 0; i < DeviceControl::TRANSFER_NUM; i++) {
+    for (int i = 0; i < DeviceControl::TRANSFER_NUM; i++)
+    {
         DeviceControl::transferInfoList[i] = {
-                std::chrono::high_resolution_clock::now(),
-                std::chrono::high_resolution_clock::now(),
-                std::chrono::high_resolution_clock::now(),
-                std::chrono::steady_clock::duration(),
-                std::chrono::steady_clock::duration()
-        };
+            std::chrono::high_resolution_clock::now(),
+            std::chrono::high_resolution_clock::now(),
+            std::chrono::high_resolution_clock::now(),
+            std::chrono::steady_clock::duration(),
+            std::chrono::steady_clock::duration()};
     }
     // log fileaa
     std::ostringstream logFileName;
@@ -37,11 +37,13 @@ DeviceControl::DeviceControl() {
     datFileName << "log_" << std::put_time(std::localtime(&timePoint), "%Y-%m-%d_%H-%M-%S") << ".dat";
     // Open the log file with the generated filename
     logFile.open(logFileName.str());
-    datFile.open(datFileName.str(),std::ofstream::binary);
+    datFile.open(datFileName.str(), std::ofstream::binary);
 }
 
-DeviceControl::~DeviceControl() {
-    if (handle) {
+DeviceControl::~DeviceControl()
+{
+    if (handle)
+    {
         libusb_close(handle);
     }
     libusb_exit(context);
@@ -50,12 +52,13 @@ DeviceControl::~DeviceControl() {
     logFile.close();
 }
 
-
-bool DeviceControl::deviceOpen() {
+bool DeviceControl::deviceOpen()
+{
     // release interface
     // claim interface
     handle = libusb_open_device_with_vid_pid(context, vid, pid);
-    if (handle == nullptr) {
+    if (handle == nullptr)
+    {
         std::cerr << "Device not found or cannot be opened." << std::endl;
         return false;
     }
@@ -73,24 +76,26 @@ bool DeviceControl::deviceOpen() {
     return true;
 }
 
-bool DeviceControl::sendCmd(const uint8_t* command, int commandLength) {
+bool DeviceControl::sendCmd(const uint8_t *command, int commandLength)
+{
     // 这里length是传入的，不是private成员
-    if (!handle) {
+    if (!handle)
+    {
         std::cerr << "Device not opened." << std::endl;
         return false;
     }
 
-
     std::cout << std::dec << "Sent Length: " << commandLength << std::endl;
     std::cout << "Send command: ";
-    for (int i = 0; i < commandLength; ++i) {
+    for (int i = 0; i < commandLength; ++i)
+    {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(command[i]) << " ";
     }
     std::cout << std::endl;
 
-
-    int result = libusb_bulk_transfer(handle, endpoint_out, const_cast<uint8_t*>(command), commandLength, &transferred_data, 10);
-    if (result != LIBUSB_SUCCESS) {
+    int result = libusb_bulk_transfer(handle, endpoint_out, const_cast<uint8_t *>(command), commandLength, &transferred_data, 10);
+    if (result != LIBUSB_SUCCESS)
+    {
         std::cerr << "Error sending command to the device. " << result << std::endl;
         return false;
     }
@@ -98,22 +103,26 @@ bool DeviceControl::sendCmd(const uint8_t* command, int commandLength) {
     return true;
 }
 
-//unsigned char buffer[32];
-// 读取下位机的命令返回,内容保存到buffer[32]
-int DeviceControl::receiveData() {
-    if (!handle) {
+// unsigned char buffer[32];
+//  读取下位机的命令返回,内容保存到buffer[32]
+int DeviceControl::receiveData()
+{
+    if (!handle)
+    {
         std::cerr << "Device not opened." << std::endl;
         return false;
     }
 
-    int result = libusb_bulk_transfer(handle, endpoint_in, (unsigned char*)&buffer, length, &transferred, 100);
-    if (result != LIBUSB_SUCCESS) {
-        std::cerr << "Error reading data from the device. " << libusb_strerror(static_cast<libusb_error>(result))  << std::endl;
+    int result = libusb_bulk_transfer(handle, endpoint_in, (unsigned char *)&buffer, length, &transferred, 100);
+    if (result != LIBUSB_SUCCESS)
+    {
+        std::cerr << "Error reading data from the device. " << libusb_strerror(static_cast<libusb_error>(result)) << std::endl;
         return false;
     }
     std::cout << std::dec << "Received: " << transferred << std::endl;
     std::cout << "Received data: ";
-    for (int i = 0; i < transferred; ++i) {
+    for (int i = 0; i < transferred; ++i)
+    {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(buffer[i]) << " ";
     }
     std::cout << std::endl;
@@ -121,18 +130,21 @@ int DeviceControl::receiveData() {
     return transferred;
 }
 
-unsigned char* DeviceControl::getBuffer() {
+unsigned char *DeviceControl::getBuffer()
+{
     return buffer;
 }
 
 // Add the savelog method to save log information to the file
-void DeviceControl::SaveLog(const std::string& log) {
+void DeviceControl::SaveLog(const std::string &log)
+{
     logFile << log << std::endl;
 }
 
 std::string subtractAndFormatTime(
-        const std::chrono::time_point<std::chrono::high_resolution_clock>& timePoint1,
-        const std::chrono::time_point<std::chrono::high_resolution_clock>& timePoint2) {
+    const std::chrono::time_point<std::chrono::high_resolution_clock> &timePoint1,
+    const std::chrono::time_point<std::chrono::high_resolution_clock> &timePoint2)
+{
 
     // 相减，得到时间间隔
     auto time_difference = std::chrono::duration_cast<std::chrono::seconds>(timePoint1 - timePoint2);
@@ -149,84 +161,66 @@ std::string subtractAndFormatTime(
     return formatted_time.str();
 }
 
-void DeviceControl::ProcessData(uint8_t* buffer, std::size_t length) {
-    // begin data process
+void DeviceControl::ProcessData(uint8_t *buffer, std::size_t length)
+{
     int numRows = 1024;
     int numCols = 1312;
-    // 创建一个Eigen::Matrix对象来保存转换后的数据
-    Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic> eigenMatrix(1312, 1024);
-    // 使用memcpy将数据从缓冲区复制到Eigen::Matrix对象中
-    std::memcpy(eigenMatrix.data(), buffer, 1312 * 1024);
-    eigenMatrix.transposeInPlace();
-    // 打印eigenMatrix的大小
-    std::cout << "原始数据前16个字节: " << std::endl;
-    // 打印eigenMatrix的第一行数据的前16个字节
-    for (int i = 0; i < 16; i++) {
-        std::cout << std::hex << static_cast<int>(eigenMatrix(0, i)) << " ";
-    }
-    std::cout << std::endl;
-    // 使用Eigen块操作交换基数列和偶数列，处理大小端问题
-    for (int i = 0; i < numCols; i += 2) {
-        eigenMatrix.block(0, i, numRows, 2).rowwise().reverseInPlace();
-    }
-    // 输出交换后的Eigen::Matrix
-    std::cout << "交换后的矩阵前16个字节：" << std::endl;
-    // 打印eigenMatrix的第一行数据的前16个字节
-    for (int i = 0; i < 16; i++) {
-        std::cout << std::hex << static_cast<int>(eigenMatrix(0, i)) << " ";
-    }
-    std::cout << std::endl;
 
-    // 使用Eigen块操作来选择奇数列和偶数列
-    // 创建一个新的Eigen::Matrix对象来存储合并后的数据
+    // 创建一个 Eigen 矩阵来保存数据
     Eigen::Matrix<uint16_t, Eigen::Dynamic, Eigen::Dynamic> mergedMatrix(numRows, numCols / 2);
 
-    // 合并奇数列和偶数列，并处理字节顺序
-    for (int row = 0; row < numRows; ++row) {
-        for (int col = 0; col < numCols / 2; ++col) {
-            uint16_t oddValue = eigenMatrix(row, 2 * col);
-            uint16_t evenValue = eigenMatrix(row, 2 * col + 1);
-            uint16_t mergedValue = (evenValue << 8) | oddValue;
-            mergedMatrix(row, col) = mergedValue;
+    // 在复制数据的过程中进行字节序交换
+    for (int row = 0; row < numRows; ++row)
+    {
+        for (int col = 0; col < numCols / 2; ++col)
+        {
+            uint8_t highByte = buffer[row * numCols + 2 * col + 1];
+            uint8_t lowByte = buffer[row * numCols + 2 * col];
+            mergedMatrix(row, col) = (static_cast<uint16_t>(highByte) << 8) | lowByte;
         }
     }
 
-    // 输出合并后的Eigen::Matrix
-    std::cout << "合并后的矩阵：" << std::endl;
-    for (int i = 0; i < 16; i++) {
-        std::cout << std::hex << static_cast<uint16_t>(mergedMatrix(0, i)) << " ";
+    // 输出合并矩阵的前16个元素以验证
+    std::cout << "合并矩阵的前16个元素: ";
+    for (int i = 0; i < 16; ++i)
+    {
+        std::cout << std::hex << mergedMatrix(0, i) << " ";
     }
     std::cout << std::endl;
-
-    // end data process
 }
-//void DeviceControl::ProcessData(uint8_t* buffer, std::size_t length) {
-//   // dataFloatAll是一个指向 float 数组的指针，因此你可以直接访问和赋值数组的元素，就像访问普通数组一样，不需要额外的指针操作符。
-//   // 两个字节一个值
-//    for (int i = 0; i < 1024; i++) {
-//        for (int j = 0; j < 640; j++) {
-//            dataFloatAll[i * 640 + j] = buffer[i * 1312 + j * 2 + 16] * 256 + buffer[i * 1312 + j * 2 + 17] ;
+//void DeviceControl::ProcessData2(uint8_t *buffer, std::size_t length)
+//{
+//    // dataFloatAll是一个指向 float 数组的指针，因此你可以直接访问和赋值数组的元素，就像访问普通数组一样，不需要额外的指针操作符。
+//    // 两个字节一个值
+//    for (int i = 0; i < 1024; i++)
+//    {
+//        for (int j = 0; j < 640; j++)
+//        {
+//            dataFloatAll[i * 640 + j] = buffer[i * 1312 + j * 2 + 16] * 256 + buffer[i * 1312 + j * 2 + 17];
 //        }
 //    }
-//    for (int j = 0; j < 12; j++) {
+//    for (int j = 0; j < 12; j++)
+//    {
 //        std::cout << dataFloatAll[j] << " ";
 //    }
 //    std::cout << std::endl;
 //}
-void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
+void DeviceControl::TransferCallback(struct libusb_transfer *transfer)
+{
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         unsigned int transfer_num = transfer->num_iso_packets;
         unsigned int frame_no = 0;
-        for (int j = 12; j < 16; j++) {
+        for (int j = 12; j < 16; j++)
+        {
             frame_no = (frame_no << 8) | DeviceControl::bufferData[transfer_num][j];
         }
-//        // 从submit到receive是transfer时间
+        //        // 从submit到receive是transfer时间
         DeviceControl::transferInfoList[transfer_num].receiveTime = std::chrono::high_resolution_clock ::now();
         DeviceControl::transferInfoList[transfer_num].transferDuration = DeviceControl::transferInfoList[transfer_num].receiveTime - DeviceControl::transferInfoList[transfer_num].submitTimeLast;
 
-
-        if (transfer->actual_length != DeviceControl::TRANSFER_SIZE) {
+        if (transfer->actual_length != DeviceControl::TRANSFER_SIZE)
+        {
             std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE << std::endl;
             return;
         }
@@ -236,34 +230,27 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
         int check = frame_no % FrameCount;
         int transferTime = std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].transferDuration).count();
         int callbackTime = std::chrono::duration_cast<std::chrono::milliseconds>(DeviceControl::transferInfoList[transfer_num].callbackDuration).count();
-        std::string elapsetdTime = subtractAndFormatTime( std::chrono::high_resolution_clock::now(), DeviceControl::transferStartTime);
+        std::string elapsetdTime = subtractAndFormatTime(std::chrono::high_resolution_clock::now(), DeviceControl::transferStartTime);
 
-
-        std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " "
-                                 + " frame_no=" + std::to_string(frame_no) + " "
-                                 + " actual_length=" + std::to_string(transfer->actual_length) + " "
-                                 + " frame_no check=" + std::to_string(check) + " "
-                                 + " transferTime=" + std::to_string(transferTime) + " "
-                                 + " callbackTime=" + std::to_string(callbackTime) + " "
-                                 + " elaspedTime=" + elapsetdTime;
+        std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " " + " frame_no=" + std::to_string(frame_no) + " " + " actual_length=" + std::to_string(transfer->actual_length) + " " + " frame_no check=" + std::to_string(check) + " " + " transferTime=" + std::to_string(transferTime) + " " + " callbackTime=" + std::to_string(callbackTime) + " " + " elaspedTime=" + elapsetdTime;
 
         std::cout << logMessage << std::endl;
 
         DeviceControl::ProcessData(transfer->buffer, transfer->actual_length);
 
-
         DeviceControl::SaveLog(logMessage);
 
-        datFile.write((char*)DeviceControl::bufferData[transfer_num],transfer->actual_length);
+        datFile.write((char *)DeviceControl::bufferData[transfer_num], transfer->actual_length);
 
-        if (check != 0) {
-            exitRequested = true;  // Set the exit flag
+        if (check != 0)
+        {
+            exitRequested = true; // Set the exit flag
         }
 
         libusb_submit_transfer(transfer);
         DeviceControl::transferInfoList[transfer_num].submitTimeLast = std::chrono::high_resolution_clock::now();
-
-    } else if (transfer->status == LIBUSB_TRANSFER_CANCELLED)
+    }
+    else if (transfer->status == LIBUSB_TRANSFER_CANCELLED)
     {
         // Transfer was cancelled, do nothing
         std::cout << "canceled" << std::endl;
@@ -275,17 +262,19 @@ void DeviceControl::TransferCallback(struct libusb_transfer* transfer) {
     }
 }
 
-void DeviceControl::ReadDataOnce(DeviceControl* deviceControl) {
+void DeviceControl::ReadDataOnce(DeviceControl *deviceControl)
+{
     auto startTime = std::chrono::steady_clock::now();
-    while (true) {
+    while (true)
+    {
         auto currentTime = std::chrono::steady_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
 
-        if (elapsedTime >= 500) {
+        if (elapsedTime >= 500)
+        {
             std::cout << "超时\n";
             break;
         }
-
 
         int transferResult = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferDataAll, deviceControl->TRANSFER_SIZE, &(deviceControl->transferred_data), 10);
         if (transferResult == 0 && deviceControl->transferred_data != 0)
@@ -297,19 +286,20 @@ void DeviceControl::ReadDataOnce(DeviceControl* deviceControl) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     std::cout << "read cache finished" << std::endl;
-
 }
 
 // 静态函数
 // 将 ReadDataAsync 修改为静态成员函数，那么在函数内部无法访问非静态成员变量。
 // 为了解决这个问题，你可以将需要访问的成员变量传递给 ReadDataAsync 函数。
 // 在 DeviceControl.cpp 中实现 ReadDataAsync
-void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
+void DeviceControl::ReadDataAsync(DeviceControl *deviceControl)
+{
     DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
 
-    libusb_transfer* transfers[TRANSFER_NUM];
+    libusb_transfer *transfers[TRANSFER_NUM];
     // 初始化异步传输
-    for (int i = 0; i < TRANSFER_NUM; ++i) {
+    for (int i = 0; i < TRANSFER_NUM; ++i)
+    {
         transfers[i] = libusb_alloc_transfer(0);
         transfers[i]->actual_length = 0;
         transfers[i]->num_iso_packets = i;
@@ -317,33 +307,37 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 0);
     }
 
-    for (std::size_t i = 0; i < TRANSFER_NUM; ++i) {
+    for (std::size_t i = 0; i < TRANSFER_NUM; ++i)
+    {
         auto &transfer = transfers[i];
         int ret = libusb_submit_transfer(transfer);
         if (ret != LIBUSB_SUCCESS)
         {
             std::cout << "Initial Submit transfer error: " << libusb_error_name(ret);
         }
-        else {
+        else
+        {
             // 初始化 submitTime
             DeviceControl::transferInfoList[i].submitTimeLast = std::chrono::high_resolution_clock::now();
         }
     }
 
-//    while (!exitRequested)
-//    {
-//        int ret = libusb_handle_events(nullptr);
-//        if (ret < 0)
-//        {
-//            std::cout << "Handle events error: " << libusb_error_name(ret);
-//            break;
-//        }
-//        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-//    }
+    //    while (!exitRequested)
+    //    {
+    //        int ret = libusb_handle_events(nullptr);
+    //        if (ret < 0)
+    //        {
+    //            std::cout << "Handle events error: " << libusb_error_name(ret);
+    //            break;
+    //        }
+    //        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    //    }
 
-    while (!exitRequested) {
+    while (!exitRequested)
+    {
         int ret = libusb_handle_events_completed(nullptr, nullptr);
-        if (ret < 0) {
+        if (ret < 0)
+        {
             std::cerr << "Handle events error: " << libusb_error_name(ret) << std::endl;
             break;
         }
@@ -351,14 +345,15 @@ void DeviceControl::ReadDataAsync(DeviceControl* deviceControl) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
-    for (auto & transfer : transfers) {
+    for (auto &transfer : transfers)
+    {
         libusb_cancel_transfer(transfer);
         libusb_free_transfer(transfer);
     }
 }
 
-void DeviceControl::StartRead() {
-//   读完缓冲区缓存
+void DeviceControl::StartRead()
+{
+    //   读完缓冲区缓存
     this->ReadDataOnce(this);
-
 }
