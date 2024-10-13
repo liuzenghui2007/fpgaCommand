@@ -163,10 +163,11 @@ std::string subtractAndFormatTime(
 
 void DeviceControl::ProcessData(uint8_t *buffer, std::size_t length)
 {
-    int numRows = 1024;
-    int numCols = 1312;
-
+    int numRows = DeviceControl::FrameCount; //1024
+    int numCols = DeviceControl::FrameSize;  //1312
+    //    dataFloatAll[i * 640 + j] = buffer[i * 1312 + j * 2 + 16] * 256 + buffer[i * 1312 + j * 2 + 17];
     // 创建一个 Eigen 矩阵来保存数据
+
     Eigen::Matrix<uint16_t, Eigen::Dynamic, Eigen::Dynamic> mergedMatrix(numRows, numCols / 2);
 
     // 在复制数据的过程中进行字节序交换
@@ -187,35 +188,20 @@ void DeviceControl::ProcessData(uint8_t *buffer, std::size_t length)
         std::cout << std::hex << mergedMatrix(0, i) << " ";
     }
     std::cout << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(0));
 }
-//void DeviceControl::ProcessData2(uint8_t *buffer, std::size_t length)
-//{
-//    // dataFloatAll是一个指向 float 数组的指针，因此你可以直接访问和赋值数组的元素，就像访问普通数组一样，不需要额外的指针操作符。
-//    // 两个字节一个值
-//    for (int i = 0; i < 1024; i++)
-//    {
-//        for (int j = 0; j < 640; j++)
-//        {
-//            dataFloatAll[i * 640 + j] = buffer[i * 1312 + j * 2 + 16] * 256 + buffer[i * 1312 + j * 2 + 17];
-//        }
-//    }
-//    for (int j = 0; j < 12; j++)
-//    {
-//        std::cout << dataFloatAll[j] << " ";
-//    }
-//    std::cout << std::endl;
-//}
 void DeviceControl::TransferCallback(struct libusb_transfer *transfer)
 {
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         unsigned int transfer_num = transfer->num_iso_packets;
         unsigned int frame_no = 0;
+        // 提取帧编号
         for (int j = 12; j < 16; j++)
         {
             frame_no = (frame_no << 8) | DeviceControl::bufferData[transfer_num][j];
         }
-        //        // 从submit到receive是transfer时间
+        // 从submit到receive是transfer时间，时间长代表队伍长，排队等待时间长
         DeviceControl::transferInfoList[transfer_num].receiveTime = std::chrono::high_resolution_clock ::now();
         DeviceControl::transferInfoList[transfer_num].transferDuration = DeviceControl::transferInfoList[transfer_num].receiveTime - DeviceControl::transferInfoList[transfer_num].submitTimeLast;
 
@@ -224,6 +210,8 @@ void DeviceControl::TransferCallback(struct libusb_transfer *transfer)
             std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE << std::endl;
             return;
         }
+        // 处理数据
+        DeviceControl::ProcessData(transfer->buffer, transfer->actual_length);
         // 从receive处理到完毕是callback时间
         DeviceControl::transferInfoList[transfer_num].callbackDuration = std::chrono::high_resolution_clock ::now() - DeviceControl::transferInfoList[transfer_num].receiveTime;
 
@@ -235,8 +223,6 @@ void DeviceControl::TransferCallback(struct libusb_transfer *transfer)
         std::string logMessage = "transfer_num=" + std::to_string(transfer_num) + " " + " frame_no=" + std::to_string(frame_no) + " " + " actual_length=" + std::to_string(transfer->actual_length) + " " + " frame_no check=" + std::to_string(check) + " " + " transferTime=" + std::to_string(transferTime) + " " + " callbackTime=" + std::to_string(callbackTime) + " " + " elaspedTime=" + elapsetdTime;
 
         std::cout << logMessage << std::endl;
-
-        DeviceControl::ProcessData(transfer->buffer, transfer->actual_length);
 
         DeviceControl::SaveLog(logMessage);
 

@@ -49,9 +49,9 @@ public:
     static bool exitRequested;
     // 数据流部分
     bool isReading = false;
-    const static int TRANSFER_NUM = 32;
+    const static int TRANSFER_NUM = 4;
     static const uint16_t FrameSize = 1312;
-    static const uint16_t FrameCount = 1024;
+    static const uint16_t FrameCount = 512;
     const static int TRANSFER_SIZE = FrameCount * FrameSize;
     const size_t total_buffer_size = TRANSFER_NUM * TRANSFER_SIZE ;
     // 转后数据
