@@ -43,11 +43,15 @@ DeviceControl::DeviceControl()
 DeviceControl::~DeviceControl()
 {
     if (handle)
-    {       
+    {
+        std::cerr << "~DeviceControl" << std::endl;
+        for (auto &transfer : transfers)
+        {
+            libusb_cancel_transfer(transfer);
+            libusb_free_transfer(transfer);
+        }
         libusb_release_interface(handle, interface_number);
-        libusb_attach_kernel_driver(handle, interface_number);
-        
-         libusb_close(handle);
+        libusb_close(handle);
     }
     libusb_exit(context);
     // 释放 buffer 内存
@@ -72,7 +76,7 @@ bool DeviceControl::deviceOpen()
     {
         std::cerr << "Failed to claim USB interface: " << libusb_strerror(static_cast<libusb_error>(ret)) << std::endl;
         libusb_close(handle);
-        libusb_exit(nullptr);
+        libusb_exit(context);
         return false;
     }
 
@@ -195,6 +199,7 @@ void DeviceControl::ProcessData(uint8_t *buffer, std::size_t length)
 }
 void DeviceControl::TransferCallback(struct libusb_transfer *transfer)
 {
+    std::cout << "Handle events callback: " << transfer->status << std::endl;
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED)
     {
         unsigned int transfer_num = transfer->num_iso_packets;
@@ -208,6 +213,7 @@ void DeviceControl::TransferCallback(struct libusb_transfer *transfer)
         DeviceControl::transferInfoList[transfer_num].receiveTime = std::chrono::high_resolution_clock ::now();
         DeviceControl::transferInfoList[transfer_num].transferDuration = DeviceControl::transferInfoList[transfer_num].receiveTime - DeviceControl::transferInfoList[transfer_num].submitTimeLast;
 
+        std::cout << "Handle events callback length: " << transfer->actual_length << std::endl;
         if (transfer->actual_length != DeviceControl::TRANSFER_SIZE)
         {
             std::cout << std::dec << transfer->actual_length << " != " << DeviceControl::TRANSFER_SIZE << std::endl;
@@ -258,17 +264,18 @@ void DeviceControl::ReadDataOnce(DeviceControl *deviceControl)
     {
         auto currentTime = std::chrono::steady_clock::now();
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - startTime).count();
-
-        if (elapsedTime >= 500)
+        if (elapsedTime >= 5000)
         {
             std::cout << "超时\n";
             break;
         }
 
-        int transferResult = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferDataAll, deviceControl->TRANSFER_SIZE, &(deviceControl->transferred_data), 10);
+        int transferResult = libusb_bulk_transfer(deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferDataAll, deviceControl->TRANSFER_SIZE, &(deviceControl->transferred_data), 100);
         if (transferResult == 0 && deviceControl->transferred_data != 0)
         {
             std::cout << "received data length=" << deviceControl->transferred_data << std::endl;
+        }else{
+            break;
         }
 
         // 等待一段时间，避免while循环过于频繁占用CPU资源
@@ -284,21 +291,19 @@ void DeviceControl::ReadDataOnce(DeviceControl *deviceControl)
 void DeviceControl::ReadDataAsync(DeviceControl *deviceControl)
 {
     DeviceControl::transferStartTime = std::chrono::high_resolution_clock::now();
-
-    libusb_transfer *transfers[TRANSFER_NUM];
     // 初始化异步传输
     for (int i = 0; i < TRANSFER_NUM; ++i)
     {
-        transfers[i] = libusb_alloc_transfer(0);
-        transfers[i]->actual_length = 0;
-        transfers[i]->num_iso_packets = i;
+        deviceControl->transfers[i] = libusb_alloc_transfer(0);
+        deviceControl->transfers[i]->actual_length = 0;
+        deviceControl->transfers[i]->num_iso_packets = i;
         DeviceControl::bufferData[i] = deviceControl->bufferDataAll + i * deviceControl->TRANSFER_SIZE;
-        libusb_fill_bulk_transfer(transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, nullptr, 0);
+        libusb_fill_bulk_transfer(deviceControl->transfers[i], deviceControl->handle, deviceControl->endpoint_data, deviceControl->bufferData[i], deviceControl->TRANSFER_SIZE, TransferCallback, deviceControl->context, 0);
     }
 
     for (std::size_t i = 0; i < TRANSFER_NUM; ++i)
     {
-        auto &transfer = transfers[i];
+        auto &transfer = deviceControl->transfers[i];
         int ret = libusb_submit_transfer(transfer);
         if (ret != LIBUSB_SUCCESS)
         {
@@ -310,11 +315,10 @@ void DeviceControl::ReadDataAsync(DeviceControl *deviceControl)
             DeviceControl::transferInfoList[i].submitTimeLast = std::chrono::high_resolution_clock::now();
         }
     }
-
-
     while (!exitRequested)
     {
-        int ret = libusb_handle_events_completed(nullptr, nullptr);
+        int ret = libusb_handle_events_completed(deviceControl->context, nullptr);
+        std::cout << "Handle events right: " << libusb_error_name(ret) << std::endl;
         if (ret < 0)
         {
             std::cerr << "Handle events error: " << libusb_error_name(ret) << std::endl;
@@ -323,8 +327,7 @@ void DeviceControl::ReadDataAsync(DeviceControl *deviceControl)
         // 在处理事件之间加入一些延时，以避免过于频繁地检查事件, ms
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-
-    for (auto &transfer : transfers)
+    for (auto &transfer : deviceControl->transfers)
     {
         libusb_cancel_transfer(transfer);
         libusb_free_transfer(transfer);

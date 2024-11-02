@@ -26,7 +26,6 @@ class DeviceControl {
 public:
     DeviceControl();
     ~DeviceControl();
-
     // 控制部分
     bool deviceOpen();
     bool sendCmd(const uint8_t* command, int commandLength); //0x01
@@ -36,7 +35,6 @@ public:
     static void ReadDataOnce(DeviceControl* deviceControl);
     // 数据流部分
     // 新增的常量成员
-
 //    static const uint16_t P2560FrameSize = 1312;
 //    static const uint16_t P2560FrameCount = 8;
     static std::atomic<std::size_t> totalTransferredData;
@@ -50,6 +48,7 @@ public:
     // 数据流部分
     bool isReading = false;
     const static int TRANSFER_NUM = 4;
+    libusb_transfer *transfers[TRANSFER_NUM];
     static const uint16_t FrameSize = 1312;
     static const uint16_t FrameCount = 512;
     const static int TRANSFER_SIZE = FrameCount * FrameSize;

@@ -190,7 +190,16 @@ int main() {
 //    bufferPtr = devCtrl.getBuffer();
 //    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
 //    resContent.showBin();
-
+    // adc disable
+    std::cout << "adc disable"  << std::endl;
+    cmdContent.fillContent(std::vector<uint32_t>(1,0));
+    cmdContent.setBitsRange(0, 1, 0b0); // adc 取消使能
+    cmd.fillCommand(1, RegisterEnum::WRITE_ADC_ENABLE_32BIT, cmdContent.getData());
+    devCtrl.sendCmd(cmd.getCommand().data(), cmd.getCommand().size());
+    transferred = devCtrl.receiveData();
+    bufferPtr = devCtrl.getBuffer();
+    resContent.fillFromBuffer(bufferPtr + 12, transferred - 12);
+    resContent.showBin();
 
     devCtrl.StartRead();
 
