@@ -43,8 +43,11 @@ DeviceControl::DeviceControl()
 DeviceControl::~DeviceControl()
 {
     if (handle)
-    {
-        libusb_close(handle);
+    {       
+        libusb_release_interface(handle, interface_number);
+        libusb_attach_kernel_driver(handle, interface_number);
+        
+         libusb_close(handle);
     }
     libusb_exit(context);
     // 释放 buffer 内存
@@ -308,16 +311,6 @@ void DeviceControl::ReadDataAsync(DeviceControl *deviceControl)
         }
     }
 
-    //    while (!exitRequested)
-    //    {
-    //        int ret = libusb_handle_events(nullptr);
-    //        if (ret < 0)
-    //        {
-    //            std::cout << "Handle events error: " << libusb_error_name(ret);
-    //            break;
-    //        }
-    //        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    //    }
 
     while (!exitRequested)
     {
